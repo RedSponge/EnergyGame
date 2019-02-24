@@ -1,0 +1,200 @@
+package com.redsponge.energy.systems;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntityListener;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Array.ArrayIterator;
+import com.redsponge.energy.components.ChainComponent;
+import com.redsponge.energy.components.CircleBottomComponent;
+import com.redsponge.energy.components.ColliderComponent;
+import com.redsponge.energy.components.Mappers;
+import com.redsponge.energy.components.PhysicsComponent;
+import com.redsponge.energy.components.PositionComponent;
+import com.redsponge.energy.components.SizeComponent;
+import com.redsponge.energy.components.VelocityComponent;
+import com.redsponge.energy.constants.Constants;
+import com.redsponge.energy.utils.GeneralUtils;
+import com.redsponge.energy.utils.SensorFactory;
+
+import java.util.Iterator;
+
+/**
+ * Handles gravity and movement
+ */
+public class PhysicsSystem extends IteratingSystem implements EntityListener {
+
+    private Vector2 gravity;
+    private World world;
+    private float pixelsPerMeter;
+
+    public PhysicsSystem(Vector2 gravity, float pixelsPerMeter) {
+        super(Family.all(PositionComponent.class, SizeComponent.class, VelocityComponent.class, PhysicsComponent.class).get(), Constants.PHYSICS_PRIORITY);
+        this.gravity = gravity;
+        this.pixelsPerMeter = pixelsPerMeter;
+        this.world = new World(this.gravity, true);
+        this.world.setContactListener(new CollisionManager());
+    }
+
+    public PhysicsSystem() {
+        this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        world.step(deltaTime, Constants.PHYSICS_VELOCITY_ITERATIONS, Constants.PHYSICS_POSITION_ITERATIONS);
+        super.update(deltaTime);
+    }
+
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+        PositionComponent pos = Mappers.position.get(entity);
+        PhysicsComponent physics = Mappers.physics.get(entity);
+
+        pos.x = physics.body.getPosition().x * pixelsPerMeter;
+        pos.y = physics.body.getPosition().y * pixelsPerMeter;
+    }
+
+    /**
+     * Sets the gravity of the engine.
+     * @param gravity The new gravity
+     */
+    public void setGravity(Vector2 gravity) {
+        this.gravity = gravity;
+    }
+
+    /**
+     * Returns the system's gravity
+     * @return The gravity
+     */
+    public Vector2 getGravity() {
+        return gravity;
+    }
+
+    /**
+     * Create the platforms for the world
+     * @param map - The world map
+     */
+    public void createWorldObjects(TiledMap map) {
+        MapLayer layer = map.getLayers().get("Collidables");
+
+        for (PolylineMapObject obj : new ArrayIterator<PolylineMapObject>(layer.getObjects().getByType(PolylineMapObject.class))) {
+            Entity platform = PlatformFactory.createChainFloor(obj.getPolyline().getTransformedVertices());
+            this.getEngine().addEntity(platform);
+        }
+        for (PolygonMapObject obj : new ArrayIterator<PolygonMapObject>(layer.getObjects().getByType(PolygonMapObject.class))) {
+            Entity platform = PlatformFactory.createChainFloor(obj.getPolygon().getTransformedVertices());
+            this.getEngine().addEntity(platform);
+        }
+    }
+
+    /**
+     * Builds the new entity's body
+     * @param entity
+     */
+    @Override
+    public void entityAdded(Entity entity) {
+        PhysicsComponent physics = Mappers.physics.get(entity);
+        SizeComponent size = Mappers.size.get(entity);
+        PositionComponent pos = Mappers.position.get(entity);
+        ColliderComponent colliderComp = Mappers.collider.get(entity);
+        ChainComponent chain = Mappers.chain.get(entity);
+        CircleBottomComponent circle = Mappers.circle.get(entity);
+
+
+        // Body Creation
+        BodyDef bdef = new BodyDef();
+        bdef.type = physics.type;
+        bdef.position.set(pos.x / pixelsPerMeter, pos.y / pixelsPerMeter);
+
+        Body body = world.createBody(bdef);
+        body.setUserData(entity);
+        physics.body = body;
+
+        FixtureDef collider = new FixtureDef();
+
+        Shape shape = null;
+        if(size != null) {
+            shape = new PolygonShape();
+            ((PolygonShape) shape).setAsBox((size.width / 2 - pixelsPerMeter * 0.01f) / pixelsPerMeter, (size.height / 2 - pixelsPerMeter * 0.01f) / pixelsPerMeter);
+        } else if(chain != null){
+            Gdx.app.log("PhysicsSystem", "CHAIN!");
+            shape = new ChainShape();
+            ((ChainShape)shape).createLoop(GeneralUtils.divideAll(chain.vertices, pixelsPerMeter));
+        } else {
+            Gdx.app.error("PhysicsSystem", "Platform Type Isn't Recognized!", new RuntimeException("Error!"));
+            return;
+        }
+        collider.shape = shape;
+        collider.friction = 0;
+
+        body.createFixture(collider).setUserData(Constants.BODY_USER_DATA);
+        shape.dispose();
+
+        // Circle Creation
+        if(circle != null && size != null) {
+            FixtureDef c = new FixtureDef();
+            c.friction = 0;
+            CircleShape circleShape = new CircleShape();
+            circleShape.setPosition(new Vector2(0, -size.height / 2 / pixelsPerMeter));
+            circleShape.setRadius(circle.radius / pixelsPerMeter);
+
+            c.shape = circleShape;
+            circle.circle = body.createFixture(c);
+            circle.circle.setUserData(Constants.CIRCLE_DATA_ID);
+
+            circleShape.dispose();
+
+        }
+
+        // Sensors Creation
+        if(colliderComp == null || size == null) {
+            return;
+        }
+
+        float down = -size.height / 2 - (circle != null ? circle.radius : 0);
+        float right = size.width / 2;
+        float left = -right;
+        float up = size.height / 2;
+        float cornerSize = 5;
+
+        colliderComp.down = SensorFactory.createCollideFixture(physics.body,  (circle == null ? size.width : 2), size.height, new Vector2(0, down), false, pixelsPerMeter);
+        colliderComp.up = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(0, up), false, pixelsPerMeter);
+        colliderComp.left = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(left, 0), true, pixelsPerMeter);
+        colliderComp.right = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(right, 0), true, pixelsPerMeter);
+
+        colliderComp.rightD = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize+10, new Vector2(right, down+2), true, pixelsPerMeter);
+        colliderComp.leftD = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize+10, new Vector2(left, down+2), true, pixelsPerMeter);
+        colliderComp.rightU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(right, up), true, pixelsPerMeter);
+        colliderComp.leftU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(left, up), true, pixelsPerMeter);
+    }
+
+    @Override
+    public void entityRemoved(Entity entity) {
+        world.destroyBody(Mappers.physics.get(entity).body);
+    }
+
+    public World getWorld() {
+        return this.world;
+    }
+}
