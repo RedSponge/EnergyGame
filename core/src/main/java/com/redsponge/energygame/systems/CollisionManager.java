@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.redsponge.energygame.components.ColliderComponent;
 import com.redsponge.energygame.components.Mappers;
+import com.redsponge.energygame.components.PlayerComponent;
 import com.redsponge.energygame.utils.Constants;
 
 public class CollisionManager implements ContactListener {
@@ -46,9 +47,13 @@ public class CollisionManager implements ContactListener {
 
     private void enemyCollision(Fixture enemy, Fixture other) {
         Entity e = (Entity) enemy.getBody().getUserData();
+        Entity o = (Entity) other.getBody().getUserData();
+        PlayerComponent player = Mappers.player.get(o);
         if(other.getUserData().equals(Constants.ATTACK_DATA_ID)) {
             engine.removeEntity(e);
-            // TODO: Kill Effects
+        }
+        else if(player != null) {
+            player.dead = true;
         }
     }
 

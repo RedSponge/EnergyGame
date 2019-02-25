@@ -42,7 +42,7 @@ public class LightEnergy implements Energy {
     @Override
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
-        if(GeneralUtils.secondsSince(superDashStartTime) < 0.1f) {
+        if(isDashOn()) {
             physics.body.applyLinearImpulse(new Vector2(10, 0), physics.body.getLocalCenter(), true);
             physics.body.setTransform(physics.body.getPosition().x + 1, physics.body.getPosition().y, 0);
         }
@@ -51,5 +51,9 @@ public class LightEnergy implements Energy {
     @Override
     public int getMinEnergy() {
         return Constants.LIGHT_THRESHOLD;
+    }
+
+    public boolean isDashOn() {
+        return GeneralUtils.secondsSince(superDashStartTime) < 0.1f;
     }
 }

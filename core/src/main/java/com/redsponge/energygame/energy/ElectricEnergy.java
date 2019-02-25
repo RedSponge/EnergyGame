@@ -57,7 +57,7 @@ public class ElectricEnergy implements Energy {
 
     @Override
     public void update(float delta) {
-        if(GeneralUtils.secondsSince(protectionStartTime) > protectionLength && protectionField != null) {
+        if(!isFieldOn() && protectionField != null) {
             PhysicsComponent p = Mappers.physics.get(player);
             p.body.destroyFixture(protectionField);
             protectionField = null;
@@ -67,5 +67,9 @@ public class ElectricEnergy implements Energy {
     @Override
     public int getMinEnergy() {
         return Constants.ELECTRIC_THRESHOLD;
+    }
+
+    public boolean isFieldOn() {
+        return GeneralUtils.secondsSince(protectionStartTime) <= protectionLength;
     }
 }

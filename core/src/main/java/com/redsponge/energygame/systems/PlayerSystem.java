@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.redsponge.energygame.components.ColliderComponent;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PlayerComponent;
+import com.redsponge.energygame.energy.EnergyManager;
 import com.redsponge.energygame.utils.Constants;
 import com.redsponge.energygame.energy.ElectricEnergy;
 import com.redsponge.energygame.energy.Energy;
@@ -54,9 +55,7 @@ public class PlayerSystem extends IteratingSystem {
 
     private long lastMoved;
 
-    private HeatEnergy heatEnergy;
-    private LightEnergy lightEnergy;
-    private ElectricEnergy electricEnergy;
+    private EnergyManager energy;
 
     public PlayerSystem(float jumpHeight, float speed, float maxSpeed, float jumpMaxTime, float pixelsPerMeter, float fallAmplifier, float wallHoldVelocity, InputSystem inputSystem, GameScreen gameScreen) {
         super(Family.all(PlayerComponent.class).get(), Constants.PLAYER_PRIORITY);
@@ -75,9 +74,8 @@ public class PlayerSystem extends IteratingSystem {
         this.wallJumpLength = 0.2f;
         this.lastMoved = 0;
 
-        this.heatEnergy = new HeatEnergy(pixelsPerMeter);
-        this.lightEnergy = new LightEnergy();
-        this.electricEnergy = new ElectricEnergy();
+
+        this.energy = new EnergyManager(pixelsPerMeter);
     }
 
     public PlayerSystem(GameScreen gameScreen) {
@@ -91,12 +89,8 @@ public class PlayerSystem extends IteratingSystem {
 
         updateFlags(collider);
 
-        heatEnergy.setPlayer(entity);
-        heatEnergy.setOnGround(onGround);
-
-        lightEnergy.setPlayer(entity);
-
-        electricEnergy.setPlayer(entity);
+        energy.setPlayer(entity);
+        energy.setOnGround(onGround);
 
         updateJumping(body, deltaTime);
 //        updateWallJumping(collider, body);
@@ -104,7 +98,7 @@ public class PlayerSystem extends IteratingSystem {
 
         updateStrafing(body, deltaTime);
         updateAttacks();
-        updateEnergies(deltaTime);
+        energy.update(deltaTime);
 
         applyFriction(body);
         updateFallVelocity(body);
@@ -117,19 +111,13 @@ public class PlayerSystem extends IteratingSystem {
         }
     }
 
-    private void updateEnergies(float deltaTime) {
-        heatEnergy.update(deltaTime);
-        lightEnergy.update(deltaTime);
-        electricEnergy.update(deltaTime);
-    }
-
     private void updateAttacks() {
         if(input.isHeatPressed()) {
-            processEnergyInput(heatEnergy);
+            processEnergyInput(energy.getHeat());
         } else if(input.isLightPressed()) {
-            processEnergyInput(lightEnergy);
+            processEnergyInput(energy.getLight());
         } else if(input.isElectricity()){
-            processEnergyInput(electricEnergy);
+            processEnergyInput(energy.getElectric());
         }
     }
 

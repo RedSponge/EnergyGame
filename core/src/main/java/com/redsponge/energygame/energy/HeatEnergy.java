@@ -3,7 +3,6 @@ package com.redsponge.energygame.energy;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -11,9 +10,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.SizeComponent;
-import com.redsponge.energygame.input.InputSystem;
-import com.redsponge.energygame.utils.Constants;
 import com.redsponge.energygame.screen.GameScreen;
+import com.redsponge.energygame.utils.Constants;
 import com.redsponge.energygame.utils.GeneralUtils;
 
 public class HeatEnergy implements Energy {
@@ -88,17 +86,26 @@ public class HeatEnergy implements Energy {
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
 
-        if(GeneralUtils.secondsSince(regularStartTime) > 0.5f && regular != null) {
+        if(isPunchOn()) {
             physics.body.destroyFixture(regular);
             Gdx.app.log("HeatEnergy", "Removed Regular Attack");
             regular = null;
         }
-        if((wantedY - physics.body.getPosition().y) > 0.7f) {
+        if(isJumpOn()) {
             physics.body.setLinearVelocity(physics.body.getLinearVelocity().x, 5);
             physics.body.setTransform(physics.body.getPosition().lerp(new Vector2(physics.body.getPosition().x, wantedY), 0.4f), 0);
         } else {
             wantedY = 0;
         }
+    }
+
+    public boolean isPunchOn() {
+        return GeneralUtils.secondsSince(regularStartTime) > 0.5f && regular != null;
+    }
+
+    public boolean isJumpOn() {
+        PhysicsComponent physics = Mappers.physics.get(player);
+        return (wantedY - physics.body.getPosition().y) > 0.7f;
     }
 
     @Override
