@@ -63,6 +63,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void render() {
+//        addEnergy(10);
         float delta = Gdx.graphics.getDeltaTime();
 
         Gdx.gl.glClearColor(1, 1, 1, 1);

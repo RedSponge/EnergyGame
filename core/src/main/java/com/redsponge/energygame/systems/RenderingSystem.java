@@ -103,7 +103,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     private void setupCameraAndMatrices() {
         PositionComponent pos = Mappers.position.get(player);
 
-        viewport.getCamera().position.set(new Vector3(pos.x, pos.y, 0));
+        viewport.getCamera().position.set(new Vector3(pos.x, viewport.getWorldHeight() / 2, 0));
         viewport.apply();
         mapRenderer.setView((OrthographicCamera) viewport.getCamera());
 

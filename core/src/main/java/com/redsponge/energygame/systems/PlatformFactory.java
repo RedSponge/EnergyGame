@@ -27,10 +27,6 @@ public class PlatformFactory {
         e.add(new PhysicsComponent(BodyType.StaticBody));
         e.add(new VelocityComponent());
         e.add(new ChainComponent(vertex));
-
-        for(float f : vertex) {
-            System.out.print(f + ",");
-        }
         System.out.println();
 
         return e;

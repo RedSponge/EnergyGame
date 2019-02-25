@@ -3,6 +3,7 @@ package com.redsponge.energygame.energy;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -23,10 +24,15 @@ public class HeatEnergy implements Energy {
     private Fixture regular;
 
     private float pixelsPerMeter;
+    private boolean onGround;
+
+    private float wantedY;
+    private long superJumpStarted;
 
     public HeatEnergy(float pixelsPerMeter) {
         this.pixelsPerMeter = pixelsPerMeter;
         regularStartTime = 0;
+        superJumpStarted = 0;
     }
 
     public void setPlayer(Entity player) {
@@ -59,9 +65,18 @@ public class HeatEnergy implements Energy {
         regularStartTime = TimeUtils.nanoTime();
     }
 
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
+
     @Override
     public void upInitiated(GameScreen gameScreen) {
-        Gdx.app.log("HeatEnergy", "Up");
+        if(!onGround) {
+            return;
+        }
+        superJumpStarted = TimeUtils.nanoTime();
+        PhysicsComponent p = Mappers.physics.get(player);
+        wantedY = p.body.getPosition().y + 4;
     }
 
     @Override
@@ -77,6 +92,12 @@ public class HeatEnergy implements Energy {
             physics.body.destroyFixture(regular);
             Gdx.app.log("HeatEnergy", "Removed Regular Attack");
             regular = null;
+        }
+        if((wantedY - physics.body.getPosition().y) > 0.7f) {
+            physics.body.setLinearVelocity(physics.body.getLinearVelocity().x, 5);
+            physics.body.setTransform(physics.body.getPosition().lerp(new Vector2(physics.body.getPosition().x, wantedY), 0.4f), 0);
+        } else {
+            wantedY = 0;
         }
     }
 
