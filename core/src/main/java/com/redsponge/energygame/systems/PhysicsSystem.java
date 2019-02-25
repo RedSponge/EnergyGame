@@ -1,5 +1,6 @@
 package com.redsponge.energygame.systems;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.utils.Array.ArrayIterator;
 import com.redsponge.energygame.components.ChainComponent;
 import com.redsponge.energygame.components.CircleBottomComponent;
 import com.redsponge.energygame.components.ColliderComponent;
+import com.redsponge.energygame.components.EnemyComponent;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.PositionComponent;
@@ -45,7 +47,6 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         this.gravity = gravity;
         this.pixelsPerMeter = pixelsPerMeter;
         this.world = new World(this.gravity, true);
-        this.world.setContactListener(new CollisionManager());
     }
 
     public PhysicsSystem() {
@@ -112,6 +113,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         ColliderComponent colliderComp = Mappers.collider.get(entity);
         ChainComponent chain = Mappers.chain.get(entity);
         CircleBottomComponent circle = Mappers.circle.get(entity);
+        EnemyComponent enemy = Mappers.enemy.get(entity);
 
 
         // Body Creation
@@ -139,8 +141,17 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         }
         collider.shape = shape;
         collider.friction = 0;
+        collider.isSensor = enemy != null;
 
-        body.createFixture(collider).setUserData(Constants.BODY_USER_DATA);
+        body.createFixture(collider).setUserData(enemy == null ? Constants.BODY_USER_DATA : Constants.ENEMY_DATA_ID);
+        if(enemy != null) {
+            FixtureDef fdef = new FixtureDef();
+            PolygonShape s = new PolygonShape();
+            s.setAsBox(1 / pixelsPerMeter, 1 / pixelsPerMeter, new Vector2(0, -size.height / 2 / pixelsPerMeter + 1/pixelsPerMeter), 0);
+            fdef.shape = s;
+            body.createFixture(fdef).setUserData(Constants.BODY_USER_DATA);
+            s.dispose();
+        }
         shape.dispose();
 
         // Circle Creation
@@ -179,6 +190,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         colliderComp.leftD = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize+10, new Vector2(left, down+2), true, pixelsPerMeter);
         colliderComp.rightU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(right, up), true, pixelsPerMeter);
         colliderComp.leftU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(left, up), true, pixelsPerMeter);
+    }
+
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        this.world.setContactListener(new CollisionManager(engine));
     }
 
     @Override

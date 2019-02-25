@@ -11,4 +11,5 @@ public class Mappers {
     public static final ComponentMapper<ColliderComponent> collider = ComponentMapper.getFor(ColliderComponent.class);
     public static final ComponentMapper<ChainComponent> chain = ComponentMapper.getFor(ChainComponent.class);
     public static final ComponentMapper<CircleBottomComponent> circle = ComponentMapper.getFor(CircleBottomComponent.class);
+    public static final ComponentMapper<EnemyComponent> enemy = ComponentMapper.getFor(EnemyComponent.class);
 }

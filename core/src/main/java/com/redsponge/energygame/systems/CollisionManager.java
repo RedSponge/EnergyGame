@@ -1,5 +1,6 @@
 package com.redsponge.energygame.systems;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -12,6 +13,12 @@ import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.utils.Constants;
 
 public class CollisionManager implements ContactListener {
+
+    private Engine engine;
+
+    public CollisionManager(Engine engine) {
+        this.engine = engine;
+    }
 
     @Override
     public void beginContact(Contact contact) {
@@ -27,6 +34,21 @@ public class CollisionManager implements ContactListener {
             Fixture other = (sensor == fixA) ? fixB : fixA;
 
             handleSensorCollision(sensor, true);
+        }
+
+        if(fixA.getUserData().equals(Constants.ENEMY_DATA_ID) || fixB.getUserData().equals(Constants.ENEMY_DATA_ID)) {
+            Fixture enemy = (fixA.getUserData().equals(Constants.ENEMY_DATA_ID) ? fixA : fixB);
+            Fixture other = (enemy == fixA) ? fixB : fixA;
+            Gdx.app.log("CollisionManager", "Enemy Collision!");
+            enemyCollision(enemy, other);
+        }
+    }
+
+    private void enemyCollision(Fixture enemy, Fixture other) {
+        Entity e = (Entity) enemy.getBody().getUserData();
+        if(other.getUserData().equals(Constants.ATTACK_DATA_ID)) {
+            engine.removeEntity(e);
+            // TODO: Kill Effects
         }
     }
 

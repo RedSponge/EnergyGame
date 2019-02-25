@@ -54,6 +54,10 @@ public class GameScreen extends AbstractScreen {
         ps.createWorldObjects(map);
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, map));
         engine.addEntity(player);
+        engine.addEntity(EntityFactory.getEnemy(200, 100, 30, 30));
+        engine.addEntity(EntityFactory.getEnemy(300, 100, 30, 30));
+        engine.addEntity(EntityFactory.getEnemy(400, 100, 30, 30));
+        engine.addEntity(EntityFactory.getEnemy(500, 100, 30, 30));
     }
 
     @Override
@@ -63,7 +67,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void render() {
-//        addEnergy(10);
+        addEnergy(10);
         float delta = Gdx.graphics.getDeltaTime();
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -110,6 +114,7 @@ public class GameScreen extends AbstractScreen {
     public void removeFromEngine(Entity entity) {
         engine.removeEntity(entity);
     }
+
     @Override
     public void dispose() {
         map.dispose();

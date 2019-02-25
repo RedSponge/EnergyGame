@@ -39,6 +39,7 @@ public class ElectricEnergy implements Energy {
             fdef.shape = circle;
             PhysicsComponent p = Mappers.physics.get(player);
             protectionField = p.body.createFixture(fdef);
+            protectionField.setUserData(Constants.ATTACK_DATA_ID);
             circle.dispose();
         }
         protectionStartTime = TimeUtils.nanoTime();
