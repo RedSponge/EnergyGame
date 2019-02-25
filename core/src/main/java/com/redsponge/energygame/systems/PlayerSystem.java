@@ -86,7 +86,9 @@ public class PlayerSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         Body body = Mappers.physics.get(entity).body;
         ColliderComponent collider = Mappers.collider.get(entity);
-
+        PlayerComponent player = Mappers.player.get(entity);
+        player.energy = energy;
+        
         updateFlags(collider);
 
         energy.setPlayer(entity);

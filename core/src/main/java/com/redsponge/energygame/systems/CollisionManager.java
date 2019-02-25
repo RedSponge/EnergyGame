@@ -40,7 +40,6 @@ public class CollisionManager implements ContactListener {
         if(fixA.getUserData().equals(Constants.ENEMY_DATA_ID) || fixB.getUserData().equals(Constants.ENEMY_DATA_ID)) {
             Fixture enemy = (fixA.getUserData().equals(Constants.ENEMY_DATA_ID) ? fixA : fixB);
             Fixture other = (enemy == fixA) ? fixB : fixA;
-            Gdx.app.log("CollisionManager", "Enemy Collision!");
             enemyCollision(enemy, other);
         }
     }
@@ -53,7 +52,11 @@ public class CollisionManager implements ContactListener {
             engine.removeEntity(e);
         }
         else if(player != null) {
-            player.dead = true;
+            if(player.energy.isSuperDashOn()) {
+                engine.removeEntity(e);
+            } else {
+                player.dead = true;
+            }
         }
     }
 

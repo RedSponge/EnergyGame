@@ -49,6 +49,7 @@ public class TransitionScreen extends AbstractScreen {
             if(to != null) {
                 if(!initiated) {
                     from.hide();
+                    from.dispose();
                     to.show();
                     to.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     initiated = true;

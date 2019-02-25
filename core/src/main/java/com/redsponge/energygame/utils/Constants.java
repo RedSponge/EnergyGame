@@ -27,7 +27,7 @@ public class Constants {
     public static final int ATTACK_DATA_ID = 3;
     public static final int ENEMY_DATA_ID = 4;
 
-    public static final float DEFAULT_PPM = 32;
+    public static final float DEFAULT_PPM = 16;
     public static final float FRICTION_MULTIPLIER = 0.9f;
     public static final float CHANGE_DIRECTION_MULTIPLIER = 10;
 

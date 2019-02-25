@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="500" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="12">
+<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="500" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="22">
  <tileset firstgid="1" source="tilemap.tsx"/>
  <layer name="Tile Layer 1" width="500" height="30">
   <properties>
@@ -40,7 +40,21 @@
  </layer>
  <objectgroup name="Collidables">
   <object id="11" x="0" y="480">
-   <polyline points="0,0 0,-64 48,-64 64,-71.6667 465,-71.6667 480.667,-64 560.667,-64.3333 574.667,-71.6667 1025,-72 1040.67,-64.6667 1072.33,-64.3333 1088,-56.6667 1343.67,-55.6667 1359,-64 1376,-64.3333 1391.67,-72 1600.33,-72.3333 1615.67,-80.3333 1808,-80 1823.33,-72.3333 1887.33,-71.6667 1904,-64.6667 2128,-64 2128,0"/>
+   <polyline points="0,0 0,-64 48,-64 64,-71.6667 465,-71.6667 480.667,-64 560.667,-64.3333 574.667,-71.6667 1025,-72 1040.67,-64.6667 1072.33,-64.3333 1088,-56.6667 1343.67,-55.6667 1359,-64 1376,-64.3333 1391.67,-72 1600.33,-72.3333 1615.67,-80.3333 1808,-80 1823.33,-72.3333 1887.33,-71.6667 1904,-64.6667 2128,-64 8000,-64"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Enemies">
+  <object id="15" x="464" y="384">
+   <point/>
+  </object>
+  <object id="17" x="752" y="384">
+   <point/>
+  </object>
+  <object id="20" x="1920" y="400">
+   <point/>
+  </object>
+  <object id="21" x="1152" y="400">
+   <point/>
   </object>
  </objectgroup>
 </map>

@@ -39,7 +39,6 @@ public class HeatEnergy implements Energy {
 
     @Override
     public void regularInitiated(GameScreen gameScreen) {
-        Gdx.app.log("HeatEnergy", "Regular");
         if(regular != null) {
             regularStartTime = TimeUtils.nanoTime();
             //TODO: Decrease Energy For Renewing
@@ -55,7 +54,7 @@ public class HeatEnergy implements Energy {
         PhysicsComponent physics = Mappers.physics.get(player);
 
         // TODO: Directions
-        shape.setAsBox(size.width / 2 / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
+        shape.setAsBox(size.width / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
         fdef.shape = shape;
 
         regular = physics.body.createFixture(fdef);
@@ -100,7 +99,7 @@ public class HeatEnergy implements Energy {
     }
 
     public boolean isPunchOn() {
-        return GeneralUtils.secondsSince(regularStartTime) > 0.5f && regular != null;
+        return GeneralUtils.secondsSince(regularStartTime) > 0.2f && regular != null;
     }
 
     public boolean isJumpOn() {

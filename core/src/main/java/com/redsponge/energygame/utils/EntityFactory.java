@@ -26,7 +26,7 @@ public class EntityFactory {
 
         return player;
     }
-    public static Entity getEnemy(int x, int y, int width, int height) {
+    public static Entity getEnemy(float x, float y, float width, float height) {
         Entity enemy = new Entity();
         enemy.add(new PositionComponent(x, y));
         enemy.add(new SizeComponent(width, height));

@@ -7,9 +7,12 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -30,8 +33,10 @@ import com.redsponge.energygame.components.PositionComponent;
 import com.redsponge.energygame.components.SizeComponent;
 import com.redsponge.energygame.components.VelocityComponent;
 import com.redsponge.energygame.utils.Constants;
+import com.redsponge.energygame.utils.EntityFactory;
 import com.redsponge.energygame.utils.GeneralUtils;
 import com.redsponge.energygame.utils.SensorFactory;
+import org.w3c.dom.css.Rect;
 
 /**
  * Handles gravity and movement
@@ -88,7 +93,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
      * Create the platforms for the world
      * @param map - The world map
      */
-    public void createWorldObjects(TiledMap map) {
+    public void createWorldPlatforms(TiledMap map) {
         MapLayer layer = map.getLayers().get("Collidables");
 
         for (PolylineMapObject obj : new ArrayIterator<PolylineMapObject>(layer.getObjects().getByType(PolylineMapObject.class))) {
@@ -98,6 +103,15 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         for (PolygonMapObject obj : new ArrayIterator<PolygonMapObject>(layer.getObjects().getByType(PolygonMapObject.class))) {
             Entity platform = PlatformFactory.createChainFloor(obj.getPolygon().getTransformedVertices());
             this.getEngine().addEntity(platform);
+        }
+    }
+
+    public void createWorldEnemies(TiledMap map) {
+        MapLayer layer = map.getLayers().get("Enemies");
+        for(RectangleMapObject enemy : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
+            Rectangle rect = enemy.getRectangle();
+            Entity e = EntityFactory.getEnemy(rect.x, rect.y, 30, 30);
+            this.getEngine().addEntity(e);
         }
     }
 

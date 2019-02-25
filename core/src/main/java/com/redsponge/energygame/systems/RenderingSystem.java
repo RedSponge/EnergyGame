@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -21,6 +22,7 @@ import com.redsponge.energygame.comparators.MapLayerComparator;
 import com.redsponge.energygame.comparators.ZComparator;
 import com.redsponge.energygame.components.CircleBottomComponent;
 import com.redsponge.energygame.components.Mappers;
+import com.redsponge.energygame.components.PlayerComponent;
 import com.redsponge.energygame.components.PositionComponent;
 import com.redsponge.energygame.components.SizeComponent;
 import com.redsponge.energygame.utils.Constants;
@@ -100,10 +102,21 @@ public class RenderingSystem extends SortedIteratingSystem {
         renderForeground();
     }
 
+
+    private float speed = 2;
+
     private void setupCameraAndMatrices() {
         PositionComponent pos = Mappers.position.get(player);
-
-        viewport.getCamera().position.set(new Vector3(pos.x, viewport.getWorldHeight() / 2, 0));
+        PlayerComponent p = Mappers.player.get(player);
+        if(p.energy.isSuperDashOn()) {
+            float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
+            ((OrthographicCamera) viewport.getCamera()).zoom += (1.1f - zoom) * .1f;
+        } else {
+            float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
+            ((OrthographicCamera) viewport.getCamera()).zoom += (1 - zoom) * .1f;
+        }
+        viewport.getCamera().position.x+=speed;
+        speed += 0.001f;
         viewport.apply();
         mapRenderer.setView((OrthographicCamera) viewport.getCamera());
 

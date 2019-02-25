@@ -10,8 +10,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.PositionComponent;
+import com.redsponge.energygame.transitions.TransitionFade;
 import com.redsponge.energygame.utils.Constants;
 import com.redsponge.energygame.systems.PhysicsDebugSystem;
 import com.redsponge.energygame.systems.PhysicsSystem;
@@ -26,6 +28,8 @@ public class GameScreen extends AbstractScreen {
     private FitViewport hudViewport;
     private TiledMap map;
     private float energy;
+
+    private Entity player;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -50,24 +54,22 @@ public class GameScreen extends AbstractScreen {
         TmxMapLoader loader = new TmxMapLoader();
         map = loader.load("maps/debugmap.tmx");
 
-        Entity player = EntityFactory.getPlayer();
-        ps.createWorldObjects(map);
+        player = EntityFactory.getPlayer();
+        ps.createWorldPlatforms(map);
+        ps.createWorldEnemies(map);
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, map));
         engine.addEntity(player);
-        engine.addEntity(EntityFactory.getEnemy(200, 100, 30, 30));
-        engine.addEntity(EntityFactory.getEnemy(300, 100, 30, 30));
-        engine.addEntity(EntityFactory.getEnemy(400, 100, 30, 30));
-        engine.addEntity(EntityFactory.getEnemy(500, 100, 30, 30));
     }
 
     @Override
     public void tick(float delta) {
-
+        if(Mappers.player.get(player).dead) {
+            ga.transitionTo(new SplashScreenScreen(ga), new TransitionFade(), 1);
+        }
     }
 
     @Override
     public void render() {
-        addEnergy(10);
         float delta = Gdx.graphics.getDeltaTime();
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
