@@ -6,10 +6,13 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.PositionComponent;
@@ -28,6 +31,7 @@ public class GameScreen extends AbstractScreen {
     private FitViewport hudViewport;
     private TiledMap map;
     private float energy;
+    private ScalingViewport scale;
 
     private Entity player;
 
@@ -42,6 +46,7 @@ public class GameScreen extends AbstractScreen {
 
         viewport = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         hudViewport = new FitViewport(Constants.HUD_WIDTH, Constants.HUD_HEIGHT);
+        scale = new ScalingViewport(Scaling.fill, 1, 1);
 
         engine = new Engine();
 
@@ -63,17 +68,24 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void tick(float delta) {
-        if(Mappers.player.get(player).dead) {
-            ga.transitionTo(new SplashScreenScreen(ga), new TransitionFade(), 1);
-        }
+//        if(Mappers.player.get(player).dead) {
+//            ga.transitionTo(new SplashScreenScreen(ga), new TransitionFade(), 1);
+//        }
+
     }
 
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        scale.apply();
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        shapeRenderer.begin(ShapeType.Filled);
+        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.rect(0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+        shapeRenderer.end();
 
         engine.update(delta);
 
@@ -98,6 +110,7 @@ public class GameScreen extends AbstractScreen {
     public void resize(int width, int height) {
         viewport.update(width, height);
         hudViewport.update(width, height, true);
+        scale.update(width, height, true);
     }
 
     public void addEnergy(float energy) {

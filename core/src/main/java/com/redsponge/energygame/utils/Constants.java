@@ -8,7 +8,7 @@ public class Constants {
     /**
      * Default gravity for {@link PhysicsSystem}
      */
-    public static final Vector2 DEFAULT_GRAVITY = new Vector2(0, -10);
+    public static final Vector2 DEFAULT_GRAVITY = new Vector2(0, -0);
 
 
     public static final int PLAYER_PRIORITY = 1;
@@ -27,15 +27,15 @@ public class Constants {
     public static final int ATTACK_DATA_ID = 3;
     public static final int ENEMY_DATA_ID = 4;
 
-    public static final float DEFAULT_PPM = 16;
+    public static final float DEFAULT_PPM = 32;
     public static final float FRICTION_MULTIPLIER = 0.9f;
     public static final float CHANGE_DIRECTION_MULTIPLIER = 10;
 
     public static final float DEFAULT_FALL_AMPLIFIER = -0.5f; // Added to the gravity when the player is falling
 
-    public static final float DEFAULT_JUMP_HEIGHT = 8;
+    public static final float DEFAULT_JUMP_HEIGHT = 10;
     public static final float DEFAULT_PLAYER_SPEED = 20;
-    public static final float DEFAULT_MAX_SPEED = 10;
+    public static final float DEFAULT_MAX_SPEED = 30;
     public static final float DEFAULT_WALL_HOLD_VELOCITY = -5;
 
     public static final float GAME_WIDTH = 480;

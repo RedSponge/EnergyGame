@@ -23,11 +23,10 @@ public class PlatformFactory {
         assert vertex.length >= 4;
 
         Entity e = new Entity();
-        e.add(new PositionComponent(vertex[0], vertex[1]));
+        e.add(new PositionComponent(0, 0));
         e.add(new PhysicsComponent(BodyType.StaticBody));
         e.add(new VelocityComponent());
         e.add(new ChainComponent(vertex));
-        System.out.println();
 
         return e;
     }

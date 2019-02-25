@@ -116,6 +116,7 @@ public class RenderingSystem extends SortedIteratingSystem {
             ((OrthographicCamera) viewport.getCamera()).zoom += (1 - zoom) * .1f;
         }
         viewport.getCamera().position.x+=speed;
+        viewport.getCamera().position.y = viewport.getWorldHeight() / 2;
         speed += 0.001f;
 
         viewport.apply();

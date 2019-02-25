@@ -95,7 +95,7 @@ public class PlayerSystem extends IteratingSystem {
         energy.setOnGround(onGround);
 
         updateJumping(body, deltaTime);
-//        updateWallJumping(collider, body);
+        updateWallJumping(collider, body);
         // TODO: Add Power System, inputs are done.
 
         updateStrafing(body, deltaTime);
@@ -106,11 +106,6 @@ public class PlayerSystem extends IteratingSystem {
         updateFallVelocity(body);
 
         clampSpeed(body);
-
-        if(Gdx.input.isKeyJustPressed(Keys.R)) {
-            body.setTransform(500 / pixelsPerMeter, 500 / pixelsPerMeter, 0);
-            body.setLinearVelocity(0, 0);
-        }
     }
 
     private void updateAttacks() {
@@ -203,7 +198,7 @@ public class PlayerSystem extends IteratingSystem {
         if(!takeControlWhileWallJump) {
             int horiz = input.getHorizontal();
             float slopeMult = onSlope ? 5 : 1;
-            float energyMultiplier = gameScreen.getEnergy() / 2 + 0.1f;
+            float energyMultiplier = 1;//gameScreen.getEnergy() / 2 + 0.1f;
 
             if(horiz != 0) {
                 if(horiz != Math.signum(body.getLinearVelocity().x)) {

@@ -38,6 +38,8 @@ import com.redsponge.energygame.utils.GeneralUtils;
 import com.redsponge.energygame.utils.SensorFactory;
 import org.w3c.dom.css.Rect;
 
+import java.util.Arrays;
+
 /**
  * Handles gravity and movement
  */

@@ -18,11 +18,11 @@ public class EntityFactory {
         Entity player = new Entity();
         player.add(new PositionComponent(100, 100));
         player.add(new VelocityComponent(0, 0));
-        player.add(new SizeComponent(20, 20));
+        player.add(new SizeComponent(32, 24));
         player.add(new PhysicsComponent(BodyType.DynamicBody));
         player.add(new PlayerComponent());
         player.add(new ColliderComponent());
-        player.add(new CircleBottomComponent(10));
+        player.add(new CircleBottomComponent(8));
 
         return player;
     }
