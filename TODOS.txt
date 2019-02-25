@@ -1,0 +1,15 @@
+- Room System
+-------------
+- Load Random Room
+- Detect When Player Needs The Next Room
+- Build Next Room (Physics)
+- Display Next Room
+- Destroy Last Room
+
+- Camera System
+---------------
+- Make camera move forward
+- Make camera speed up to a certain speed
+- Make camera speed controlled by map
+
+-----------------------------------------------

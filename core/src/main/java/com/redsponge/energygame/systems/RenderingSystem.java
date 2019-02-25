@@ -117,6 +117,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         }
         viewport.getCamera().position.x+=speed;
         speed += 0.001f;
+
         viewport.apply();
         mapRenderer.setView((OrthographicCamera) viewport.getCamera());
 
