@@ -15,4 +15,13 @@ public class GeneralUtils {
         }
         return n;
     }
+
+    public static float[] transformAll(float[] vertices, float x, float y) {
+        float[] n = new float[vertices.length];
+        for(int i = 0; i < n.length; i+=2) {
+            n[i] = vertices[i] + x;
+            n[i + 1] = vertices[i+1] + y;
+        }
+        return n;
+    }
 }

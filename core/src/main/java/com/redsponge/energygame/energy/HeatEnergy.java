@@ -91,8 +91,8 @@ public class HeatEnergy implements Energy {
             regular = null;
         }
         if(isJumpOn()) {
-            physics.body.setLinearVelocity(physics.body.getLinearVelocity().x, 5);
-            physics.body.setTransform(physics.body.getPosition().lerp(new Vector2(physics.body.getPosition().x, wantedY), 0.4f), 0);
+            physics.body.setLinearVelocity(physics.body.getLinearVelocity().x, 20);
+//            physics.body.setTransform(physics.body.getPosition().lerp(new Vector2(physics.body.getPosition().x, wantedY), 0.4f), 0);
         } else {
             wantedY = 0;
         }
@@ -104,7 +104,7 @@ public class HeatEnergy implements Energy {
 
     public boolean isJumpOn() {
         PhysicsComponent physics = Mappers.physics.get(player);
-        return (wantedY - physics.body.getPosition().y) > 0.7f;
+        return (wantedY - physics.body.getPosition().y) > 0.7f && GeneralUtils.secondsSince(superJumpStarted) < 2;
     }
 
     @Override

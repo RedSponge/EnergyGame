@@ -42,18 +42,16 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     private MapLayerComparator mapLayerComparator;
     private TiledMapTileLayer[] renderLayers;
+    private int currentMapOffset;
 
-    public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, TiledMap map) {
+    public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player) {
         super(Family.all(PositionComponent.class, SizeComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
         this.shapeRenderer = shapeRenderer;
         this.batch = batch;
         this.player = player;
         this.viewport = viewport;
-        this.map = map;
-        this.mapRenderer = new OrthogonalTiledMapRenderer(map, this.batch);
         this.mapLayerComparator = new MapLayerComparator();
-
-        sortLayers();
+        this.currentMapOffset = 0;
     }
 
     private void sortLayers() {
@@ -117,7 +115,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         }
         viewport.getCamera().position.x+=speed;
         viewport.getCamera().position.y = viewport.getWorldHeight() / 2;
-        speed += 0.001f;
+//        speed += 0.001f;
 
         viewport.apply();
         mapRenderer.setView((OrthographicCamera) viewport.getCamera());
@@ -159,5 +157,20 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     public void setPlayer(Entity player) {
         this.player = player;
+    }
+
+    public void setCurrentMap(TiledMap currentMap) {
+        this.map = currentMap;
+        if (this.mapRenderer == null) {
+            this.mapRenderer = new OrthogonalTiledMapRenderer(this.map, this.batch);
+        } else {
+            this.mapRenderer.setMap(map);
+        }
+
+        sortLayers();
+    }
+
+    public void setCurrentMapOffset(int currentMapOffset) {
+        this.currentMapOffset = currentMapOffset;
     }
 }

@@ -266,7 +266,7 @@ public class PlayerSystem extends IteratingSystem {
         {
             newVx = maxSpeed * Math.signum(newVx);
         }
-        if(Math.abs(newVy) > maxSpeed)
+        if(Math.abs(newVy) > maxSpeed && !energy.isSuperJumpOn())
         {
             newVy = maxSpeed * Math.signum(newVy);
         }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.redsponge.energygame.components.CircleBottomComponent;
 import com.redsponge.energygame.components.ColliderComponent;
 import com.redsponge.energygame.components.EnemyComponent;
+import com.redsponge.energygame.components.EventComponent;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.PlayerComponent;
 import com.redsponge.energygame.components.PositionComponent;
@@ -35,4 +36,13 @@ public class EntityFactory {
 
         return enemy;
     }
-}
+
+    public static Entity getEventEntity(float x, float y, float width, float height, String event) {
+        Entity sensor = new Entity();
+        sensor.add(new PositionComponent(x, y));
+        sensor.add(new SizeComponent(width, height));
+        sensor.add(new PhysicsComponent(BodyType.StaticBody));
+        sensor.add(new EventComponent(event));
+
+        return sensor;
+    }}

@@ -8,15 +8,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.components.PositionComponent;
-import com.redsponge.energygame.transitions.TransitionFade;
+import com.redsponge.energygame.maps.MapManager;
 import com.redsponge.energygame.utils.Constants;
 import com.redsponge.energygame.systems.PhysicsDebugSystem;
 import com.redsponge.energygame.systems.PhysicsSystem;
@@ -32,6 +30,7 @@ public class GameScreen extends AbstractScreen {
     private TiledMap map;
     private float energy;
     private ScalingViewport scale;
+    private MapManager mapManager;
 
     private Entity player;
 
@@ -50,27 +49,26 @@ public class GameScreen extends AbstractScreen {
 
         engine = new Engine();
 
-        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM);
+        mapManager = new MapManager();
+
+        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, mapManager);
         engine.addSystem(ps);
         engine.addEntityListener(Family.all(PositionComponent.class, PhysicsComponent.class).get(), ps);
         engine.addSystem(new PlayerSystem(this));
         engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
 
-        TmxMapLoader loader = new TmxMapLoader();
-        map = loader.load("maps/debugmap.tmx");
 
         player = EntityFactory.getPlayer();
-        ps.createWorldPlatforms(map);
-        ps.createWorldEnemies(map);
-        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, map));
+        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player));
+
+        mapManager.setSystems(engine);
+        mapManager.loadNextMap();
+
         engine.addEntity(player);
     }
 
     @Override
     public void tick(float delta) {
-//        if(Mappers.player.get(player).dead) {
-//            ga.transitionTo(new SplashScreenScreen(ga), new TransitionFade(), 1);
-//        }
 
     }
 

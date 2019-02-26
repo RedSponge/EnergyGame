@@ -9,16 +9,23 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.redsponge.energygame.components.ColliderComponent;
+import com.redsponge.energygame.components.EventComponent;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PlayerComponent;
+import com.redsponge.energygame.maps.MapManager;
 import com.redsponge.energygame.utils.Constants;
+import com.redsponge.energygame.utils.Pair;
 
 public class CollisionManager implements ContactListener {
 
     private Engine engine;
+    private PhysicsSystem physicsSystem;
+    private MapManager mapManager;
 
-    public CollisionManager(Engine engine) {
+    public CollisionManager(Engine engine, MapManager mapManager) {
         this.engine = engine;
+        this.mapManager = mapManager;
+        this.physicsSystem = this.engine.getSystem(PhysicsSystem.class);
     }
 
     @Override
@@ -41,6 +48,44 @@ public class CollisionManager implements ContactListener {
             Fixture enemy = (fixA.getUserData().equals(Constants.ENEMY_DATA_ID) ? fixA : fixB);
             Fixture other = (enemy == fixA) ? fixB : fixA;
             enemyCollision(enemy, other);
+        }
+
+        if(fixA.getUserData().equals(Constants.EVENT_DATA_ID) || fixB.getUserData().equals(Constants.EVENT_DATA_ID)) {
+            Fixture event = (fixA.getUserData().equals(Constants.EVENT_DATA_ID) ? fixA : fixB);
+            Fixture other = (event == fixA) ? fixB : fixA;
+            eventCollision(event, other);
+        }
+    }
+
+    private void eventCollision(Fixture event, Fixture other) {
+        EventComponent eventC = Mappers.event.get((Entity) event.getBody().getUserData());
+        PlayerComponent player = Mappers.player.get((Entity) other.getBody().getUserData());
+
+        if(player == null) {
+            Gdx.app.log("Event", "Event collided with someone other than player");
+        } else if(!eventC.executed){
+            eventC.executed = true;
+            if(eventC.event.equals("loadnext")) {
+                Gdx.app.log("Event", "LoadNext Event Called!");
+                mapManager.loadNextMap();
+            }
+        }
+    }
+
+    /**
+     *
+     * @return <wanted fixture><other fixture> or null if the user data wasn't there
+     */
+    public Pair<Fixture, Fixture> getCertainFixture(Contact c, Object data) {
+        Fixture fixA = c.getFixtureA();
+        Fixture fixB = c.getFixtureB();
+
+        if(fixA.getUserData().equals(data) || fixB.getUserData().equals(data)) {
+            Fixture wanted = (fixA.getUserData().equals(data) ? fixA : fixB);
+            Fixture other = fixA == wanted ? fixB : fixA;
+            return new Pair<Fixture, Fixture>(fixA, fixB);
+        } else {
+            return null;
         }
     }
 

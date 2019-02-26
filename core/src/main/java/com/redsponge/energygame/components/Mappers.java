@@ -14,4 +14,5 @@ public class Mappers {
     public static final ComponentMapper<CircleBottomComponent> circle = ComponentMapper.getFor(CircleBottomComponent.class);
     public static final ComponentMapper<EnemyComponent> enemy = ComponentMapper.getFor(EnemyComponent.class);
     public static final ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
+    public static final ComponentMapper<EventComponent> event = ComponentMapper.getFor(EventComponent.class);
 }
