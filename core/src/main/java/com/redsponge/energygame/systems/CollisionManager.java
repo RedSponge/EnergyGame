@@ -20,6 +20,7 @@ public class CollisionManager implements ContactListener {
 
     private Engine engine;
     private MapManager mapManager;
+    private RenderingSystem rs;
 
     public CollisionManager(Engine engine, MapManager mapManager) {
         this.engine = engine;
@@ -38,8 +39,9 @@ public class CollisionManager implements ContactListener {
         if(fixA.getUserData().equals(Constants.SENSOR_DATA_ID) || fixB.getUserData().equals(Constants.SENSOR_DATA_ID)) {
             Fixture sensor = (fixA.getUserData().equals(Constants.SENSOR_DATA_ID) ? fixA : fixB);
             Fixture other = (sensor == fixA) ? fixB : fixA;
-
-            handleSensorCollision(sensor, true);
+            if(Mappers.platform.get((Entity) other.getBody().getUserData()) != null) {
+                handleSensorCollision(sensor, true);
+            }
         }
 
         if(fixA.getUserData().equals(Constants.ENEMY_DATA_ID) || fixB.getUserData().equals(Constants.ENEMY_DATA_ID)) {
@@ -66,6 +68,9 @@ public class CollisionManager implements ContactListener {
             if(eventC.event.equals("loadnext")) {
                 Gdx.app.log("Event", "LoadNext Event Called!");
                 mapManager.loadNextMap();
+            } else if(eventC.event.equals("zoom")) {
+                Gdx.app.log("Event", "Zoom Event Called!");
+                this.engine.getSystem(RenderingSystem.class).setDesiredZoom(Float.parseFloat(eventC.props.get("data", String.class)));
             }
         }
     }
@@ -114,8 +119,11 @@ public class CollisionManager implements ContactListener {
 
         if(fixA.getUserData().equals(Constants.SENSOR_DATA_ID) || fixB.getUserData().equals(Constants.SENSOR_DATA_ID)) {
             Fixture sensor = (fixA.getUserData().equals(Constants.SENSOR_DATA_ID) ? fixA : fixB);
+            Fixture other = sensor == fixA ? fixB : fixA;
 
-            handleSensorCollision(sensor, false);
+            if(Mappers.platform.get((Entity) other.getBody().getUserData()) != null) {
+                handleSensorCollision(sensor, false);
+            }
         }
     }
 
@@ -139,23 +147,6 @@ public class CollisionManager implements ContactListener {
         if(sensor == collider.down) {
             Gdx.app.debug("Collision", "Down Sensor Collision " + (collisionStart ? "Start" : "End") + "!");
             collider.downTouches += adder;
-        }
-
-        if(sensor == collider.rightU) {
-            Gdx.app.debug("Collision", "RightUp Sensor Collision " + (collisionStart ? "Start" : "End") + "!");
-            collider.rightUTouches += adder;
-        }
-        if(sensor == collider.leftU) {
-            Gdx.app.debug("Collision", "LeftUp Sensor Collision " + (collisionStart ? "Start" : "End") + "!");
-            collider.leftUTouches += adder;
-        }
-        if(sensor == collider.rightD) {
-            Gdx.app.debug("Collision", "RightDown Sensor Collision " + (collisionStart ? "Start" : "End") + "!");
-            collider.rightDTouches += adder;
-        }
-        if(sensor == collider.leftD) {
-            Gdx.app.debug("Collision", "LeftDown Sensor Collision " + (collisionStart ? "Start" : "End") + "!");
-            collider.leftDTouches += adder;
         }
     }
 

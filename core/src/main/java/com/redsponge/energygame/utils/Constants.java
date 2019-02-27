@@ -26,6 +26,7 @@ public class Constants {
     public static final int CIRCLE_DATA_ID = 2;
     public static final int ATTACK_DATA_ID = 3;
     public static final int ENEMY_DATA_ID = 4;
+    public static final int PLATFORM_DATA_ID = 5;
     public static final int EVENT_DATA_ID = 6;
 
     public static final float DEFAULT_PPM = 32;
@@ -34,13 +35,13 @@ public class Constants {
 
     public static final float DEFAULT_FALL_AMPLIFIER = -0.5f; // Added to the gravity when the player is falling
 
-    public static final float DEFAULT_JUMP_HEIGHT = 0;
+    public static final float DEFAULT_JUMP_HEIGHT = 10;
     public static final float DEFAULT_PLAYER_SPEED = 2;
     public static final float DEFAULT_MAX_SPEED = 5;
     public static final float DEFAULT_WALL_HOLD_VELOCITY = -5;
 
-    public static final float GAME_WIDTH = 480*2;
-    public static final float GAME_HEIGHT = 360*2;
+    public static final float GAME_WIDTH = 384;
+    public static final float GAME_HEIGHT = 216;
 
     public static final int HEAT_THRESHOLD = 10;
     public static final int LIGHT_THRESHOLD = 50;
@@ -48,4 +49,5 @@ public class Constants {
 
     public static final float HUD_WIDTH = 640;
     public static final float HUD_HEIGHT = 480;
+    public static final float MAX_ENERGY = 100;
 }

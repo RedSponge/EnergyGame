@@ -1,9 +1,13 @@
 package com.redsponge.energygame.utils;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.redsponge.energygame.assets.Assets;
+import com.redsponge.energygame.components.AnimationComponent;
 import com.redsponge.energygame.components.CircleBottomComponent;
 import com.redsponge.energygame.components.ColliderComponent;
+import com.redsponge.energygame.components.DirectionComponent;
 import com.redsponge.energygame.components.EnemyComponent;
 import com.redsponge.energygame.components.EventComponent;
 import com.redsponge.energygame.components.PhysicsComponent;
@@ -15,7 +19,7 @@ import com.redsponge.energygame.components.VelocityComponent;
 public class EntityFactory {
 
 
-    public static Entity getPlayer() {
+    public static Entity getPlayer(Assets assets) {
         Entity player = new Entity();
         player.add(new PositionComponent(100, 100));
         player.add(new VelocityComponent(0, 0));
@@ -23,7 +27,8 @@ public class EntityFactory {
         player.add(new PhysicsComponent(BodyType.DynamicBody));
         player.add(new PlayerComponent());
         player.add(new ColliderComponent());
-        player.add(new CircleBottomComponent(8));
+        player.add(new AnimationComponent(assets.getTextures().lowRun));
+        player.add(new DirectionComponent());
 
         return player;
     }
@@ -37,12 +42,12 @@ public class EntityFactory {
         return enemy;
     }
 
-    public static Entity getEventEntity(float x, float y, float width, float height, String event) {
+    public static Entity getEventEntity(float x, float y, float width, float height, MapProperties props) {
         Entity sensor = new Entity();
         sensor.add(new PositionComponent(x, y));
         sensor.add(new SizeComponent(width, height));
         sensor.add(new PhysicsComponent(BodyType.StaticBody));
-        sensor.add(new EventComponent(event));
+        sensor.add(new EventComponent(props.get("type", String.class), props));
 
         return sensor;
     }}

@@ -10,18 +10,8 @@ public class ColliderComponent implements Component {
     public Fixture up;
     public Fixture down;
 
-    public Fixture rightD;
-    public Fixture rightU;
-    public Fixture leftD;
-    public Fixture leftU;
-
     public int leftTouches = 0;
     public int rightTouches = 0;
     public int upTouches = 0;
     public int downTouches = 0;
-
-    public int leftDTouches = 0;
-    public int leftUTouches = 0;
-    public int rightDTouches = 0;
-    public int rightUTouches = 0;
 }

@@ -30,6 +30,7 @@ import com.redsponge.energygame.components.EnemyComponent;
 import com.redsponge.energygame.components.EventComponent;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
+import com.redsponge.energygame.components.PlatformComponent;
 import com.redsponge.energygame.components.PositionComponent;
 import com.redsponge.energygame.components.SizeComponent;
 import com.redsponge.energygame.components.VelocityComponent;
@@ -133,7 +134,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         MapLayer layer = map.getLayers().get("Events");
         for(RectangleMapObject event : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
             Rectangle rect = event.getRectangle();
-            Entity e = EntityFactory.getEventEntity(rect.x + offset, rect.y, rect.width, rect.height, event.getProperties().get("type", String.class));
+            Entity e = EntityFactory.getEventEntity(rect.x + offset, rect.y, rect.width, rect.height, event.getProperties());
             entities.add(e);
             this.getEngine().addEntity(e);
         }
@@ -155,6 +156,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         CircleBottomComponent circle = Mappers.circle.get(entity);
         EnemyComponent enemy = Mappers.enemy.get(entity);
         EventComponent event = Mappers.event.get(entity);
+        PlatformComponent platform = Mappers.platform.get(entity);
 
 
         // Body Creation
@@ -184,7 +186,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         collider.friction = 0;
         collider.isSensor = enemy != null || event != null;
 
-        body.createFixture(collider).setUserData(enemy == null ? event != null ? Constants.EVENT_DATA_ID : Constants.BODY_DATA_ID : Constants.ENEMY_DATA_ID);
+        body.createFixture(collider).setUserData(enemy == null ? event != null ? Constants.EVENT_DATA_ID : platform != null ? Constants.PLATFORM_DATA_ID : Constants.BODY_DATA_ID : Constants.ENEMY_DATA_ID);
         if(enemy != null) {
             FixtureDef fdef = new FixtureDef();
             PolygonShape s = new PolygonShape();
@@ -220,17 +222,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         float right = size.width / 2;
         float left = -right;
         float up = size.height / 2;
-        float cornerSize = 5;
 
         colliderComp.down = SensorFactory.createCollideFixture(physics.body,  (circle == null ? size.width : 2), size.height, new Vector2(0, down), false, pixelsPerMeter);
         colliderComp.up = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(0, up), false, pixelsPerMeter);
         colliderComp.left = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(left, 0), true, pixelsPerMeter);
         colliderComp.right = SensorFactory.createCollideFixture(physics.body, size.width, size.height, new Vector2(right, 0), true, pixelsPerMeter);
 
-        colliderComp.rightD = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize+10, new Vector2(right, down+2), true, pixelsPerMeter);
-        colliderComp.leftD = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize+10, new Vector2(left, down+2), true, pixelsPerMeter);
-        colliderComp.rightU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(right, up), true, pixelsPerMeter);
-        colliderComp.leftU = SensorFactory.createCollideFixture(physics.body, cornerSize, cornerSize, new Vector2(left, up), true, pixelsPerMeter);
     }
 
     @Override

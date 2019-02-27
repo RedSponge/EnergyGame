@@ -4,19 +4,19 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.assets.Assets;
+import com.redsponge.energygame.components.AnimationComponent;
 import com.redsponge.energygame.components.ColliderComponent;
+import com.redsponge.energygame.components.DirectionComponent;
+import com.redsponge.energygame.components.DirectionComponent.Direction;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PlayerComponent;
 import com.redsponge.energygame.energy.EnergyManager;
 import com.redsponge.energygame.utils.Constants;
-import com.redsponge.energygame.energy.ElectricEnergy;
 import com.redsponge.energygame.energy.Energy;
-import com.redsponge.energygame.energy.HeatEnergy;
-import com.redsponge.energygame.energy.LightEnergy;
 import com.redsponge.energygame.input.InputSystem;
 import com.redsponge.energygame.input.SimpleInputSystem;
 import com.redsponge.energygame.screen.GameScreen;
@@ -41,7 +41,6 @@ public class PlayerSystem extends IteratingSystem {
 
     // Flags
     private boolean onGround;
-    private boolean onSlope;
     private boolean jumping;
     private boolean holdingWall;
 
@@ -56,8 +55,9 @@ public class PlayerSystem extends IteratingSystem {
     private long lastMoved;
 
     private EnergyManager energy;
+    private Assets assets;
 
-    public PlayerSystem(float jumpHeight, float speed, float maxSpeed, float jumpMaxTime, float pixelsPerMeter, float fallAmplifier, float wallHoldVelocity, InputSystem inputSystem, GameScreen gameScreen) {
+    public PlayerSystem(float jumpHeight, float speed, float maxSpeed, float jumpMaxTime, float pixelsPerMeter, float fallAmplifier, float wallHoldVelocity, InputSystem inputSystem, GameScreen gameScreen, Assets assets) {
         super(Family.all(PlayerComponent.class).get(), Constants.PLAYER_PRIORITY);
         this.jumpHeight = jumpHeight;
         this.speed = speed;
@@ -68,6 +68,7 @@ public class PlayerSystem extends IteratingSystem {
         this.wallHoldVelocity = wallHoldVelocity;
         this.input = inputSystem;
         this.gameScreen = gameScreen;
+        this.assets = assets;
         this.jumpStartTime = 0;
         this.wallJumpStartTime = 0;
         this.takeControlWhileWallJump = false;
@@ -78,8 +79,8 @@ public class PlayerSystem extends IteratingSystem {
         this.energy = new EnergyManager(pixelsPerMeter);
     }
 
-    public PlayerSystem(GameScreen gameScreen) {
-        this(Constants.DEFAULT_JUMP_HEIGHT, Constants.DEFAULT_PLAYER_SPEED, Constants.DEFAULT_MAX_SPEED, 0.15f, Constants.DEFAULT_PPM, Constants.DEFAULT_FALL_AMPLIFIER, Constants.DEFAULT_WALL_HOLD_VELOCITY, new SimpleInputSystem(), gameScreen);
+    public PlayerSystem(GameScreen gameScreen, Assets assets) {
+        this(Constants.DEFAULT_JUMP_HEIGHT, Constants.DEFAULT_PLAYER_SPEED, Constants.DEFAULT_MAX_SPEED, 0.15f, Constants.DEFAULT_PPM, Constants.DEFAULT_FALL_AMPLIFIER, Constants.DEFAULT_WALL_HOLD_VELOCITY, new SimpleInputSystem(), gameScreen, assets);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class PlayerSystem extends IteratingSystem {
         updateWallJumping(collider, body);
         // TODO: Add Power System, inputs are done.
 
-        updateStrafing(body, deltaTime);
+        updateStrafing(entity, body, deltaTime);
         updateAttacks();
         energy.update(deltaTime);
 
@@ -106,6 +107,21 @@ public class PlayerSystem extends IteratingSystem {
         updateFallVelocity(body);
 
         clampSpeed(body);
+
+        updateAnimation(entity, body);
+    }
+
+    private void updateAnimation(Entity entity, Body body) {
+        AnimationComponent animation = Mappers.animation.get(entity);
+        boolean idle = body.getLinearVelocity().x == 0;
+
+        if(gameScreen.getEnergy() < Constants.LIGHT_THRESHOLD) {
+            animation.animation = assets.getTextures().lowRun;
+        } else if(gameScreen.getEnergy() < Constants.ELECTRIC_THRESHOLD) {
+            animation.animation = assets.getTextures().medRun;
+        } else {
+            animation.animation = assets.getTextures().highRun;
+        }
     }
 
     private void updateAttacks() {
@@ -142,8 +158,6 @@ public class PlayerSystem extends IteratingSystem {
     private void updateFlags(ColliderComponent collider) {
         onGround = collider.downTouches > 0;
         holdingWall = collider.rightTouches > 0 || collider.leftTouches > 0;
-
-        onSlope = (collider.rightDTouches > 0 || collider.leftDTouches > 0) && !onGround;
     }
 
 
@@ -194,10 +208,9 @@ public class PlayerSystem extends IteratingSystem {
      * @param body - The player's {@link Body}
      * @param deltaTime - The delta time since the last frame
      */
-    private void updateStrafing(Body body, float deltaTime) {
+    private void updateStrafing(Entity e, Body body, float deltaTime) {
         if(!takeControlWhileWallJump) {
             int horiz = input.getHorizontal();
-            float slopeMult = onSlope ? 5 : 1;
             float energyMultiplier = 1;//gameScreen.getEnergy() / 2 + 0.1f;
 
             if(horiz != 0) {
@@ -205,14 +218,16 @@ public class PlayerSystem extends IteratingSystem {
                     if(body.getLinearVelocity().x != 0) {
                         gameScreen.addEnergy(-3f);
                     }
-                    body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * Constants.CHANGE_DIRECTION_MULTIPLIER * slopeMult, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * Constants.CHANGE_DIRECTION_MULTIPLIER, 0), body.getWorldCenter(), true);
                 } else {
-                    body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * slopeMult * energyMultiplier, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * energyMultiplier, 0), body.getWorldCenter(), true);
                     if (onGround) {
                         gameScreen.addEnergy(0.1f);
                     }
                 }
                 lastMoved = TimeUtils.nanoTime();
+                DirectionComponent dir = Mappers.direction.get(e);
+                dir.direction = Direction.fromNumber(horiz);
             }
         }
 
@@ -246,7 +261,6 @@ public class PlayerSystem extends IteratingSystem {
             body.applyLinearImpulse(new Vector2(0, fallAmplifier), body.getWorldCenter(), true);
         }
 
-        // Slow down fall when holding wall
         if(holdingWall && input.getHorizontal() != 0) {
             if(body.getLinearVelocity().y < wallHoldVelocity) {
                 body.setLinearVelocity(body.getLinearVelocity().x, wallHoldVelocity);
@@ -262,11 +276,11 @@ public class PlayerSystem extends IteratingSystem {
         float newVx = body.getLinearVelocity().x;
         float newVy = body.getLinearVelocity().y;
 
-        if(Math.abs(newVx) > maxSpeed)
+        if(Math.abs(newVx) > maxSpeed && !energy.isSuperDashOn())
         {
             newVx = maxSpeed * Math.signum(newVx);
         }
-        if(Math.abs(newVy) > maxSpeed && !energy.isSuperJumpOn())
+        if(Math.abs(newVy) > maxSpeed && !energy.isSuperJumpOn() && !jumping)
         {
             newVy = maxSpeed * Math.signum(newVy);
         }

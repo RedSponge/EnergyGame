@@ -1,7 +1,6 @@
 package com.redsponge.energygame.components;
 
 import com.badlogic.ashley.core.ComponentMapper;
-import com.redsponge.energygame.utils.HashCollections;
 
 public class Mappers {
 
@@ -15,4 +14,7 @@ public class Mappers {
     public static final ComponentMapper<EnemyComponent> enemy = ComponentMapper.getFor(EnemyComponent.class);
     public static final ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
     public static final ComponentMapper<EventComponent> event = ComponentMapper.getFor(EventComponent.class);
+    public static final ComponentMapper<AnimationComponent> animation = ComponentMapper.getFor(AnimationComponent.class);
+    public static final ComponentMapper<DirectionComponent> direction = ComponentMapper.getFor(DirectionComponent.class);
+    public static final ComponentMapper<PlatformComponent> platform = ComponentMapper.getFor(PlatformComponent.class);
 }

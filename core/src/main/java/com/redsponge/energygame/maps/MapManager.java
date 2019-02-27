@@ -20,27 +20,28 @@ public class MapManager implements Disposable {
         this.engine = engine;
         this.currentMapOffset = 0;
         this.ps = ps;
-        this.head = new MapHolder(initialMap, ps, 0, this.engine);
     }
 
     public void init() {
-        this.head.setEntities(ps.loadNewMap(head.getMap(), 0));
+        loadNextMap();
+        loadNextMap();
     }
 
     public void loadNextMap() {
+        Gdx.app.log("MapManager", "Loading Next Map!!!");
         if(tail != null) {
             Gdx.app.log("MapManager", "Disposing Tail!");
             tail.dispose();
         }
-        if(current != null) {
-            MapProperties prop = current.getMap().getProperties();
+        if(head != null) {
+            Gdx.app.log("MapManager", "Shifting Current To Tail!");
+            MapProperties prop = head.getMap().getProperties();
             currentMapOffset += prop.get("width", Integer.class) * prop.get("tilewidth", Integer.class);
-
-            tail = current;
         }
+        tail = current;
         current = head;
 
-        head = loadMap("maps/random1.tmx");
+        head = loadMap("maps/level1.tmx");
         head.setEntities(ps.loadNewMap(head.getMap(), currentMapOffset));
     }
 

@@ -1,13 +1,20 @@
 - Enemies
 ------------------
-- Make proper Game Over Screen
-
-- Room System
--------------
-- Display Next Room
-- Destroy Last Room
+- Make proper Game Over Screen=
 
 - Camera System
 ---------------
 - Make camera speed up to a certain speed
+- Make camera speed up to player if they're out of screen
 - Make camera speed controlled by map
+
+- Energy
+-----------
+- Add energy reduction when used
+- Add energy bar
+
+- Animations
+------------
+- Add idle animation
+- Add energy animations
+

@@ -4,13 +4,17 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.comparators.ZComparator;
 import com.redsponge.energygame.components.*;
 import com.redsponge.energygame.maps.MapManager;
@@ -27,14 +31,16 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     private MapManager mapManager;
     private MapManagerRenderer mapRenderer;
+    private Assets assets;
 
-    public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, MapManager mapManager) {
+    public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, MapManager mapManager, Assets assets) {
         super(Family.all(PositionComponent.class, SizeComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
         this.shapeRenderer = shapeRenderer;
         this.batch = batch;
         this.player = player;
         this.viewport = viewport;
         this.mapManager = mapManager;
+        this.assets = assets;
         this.mapRenderer = new MapManagerRenderer(mapManager, batch);
     }
 
@@ -45,40 +51,43 @@ public class RenderingSystem extends SortedIteratingSystem {
         AnimatedTiledMapTile.updateAnimationBaseTime();
         mapRenderer.renderBackground(viewport);
 
-        // TODO: Render all entities based on texture / animation components
-
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.GRAY);
+        batch.begin();
         SizeComponent size = Mappers.size.get(player);
         PositionComponent pos = Mappers.position.get(player);
         CircleBottomComponent circle = Mappers.circle.get(player);
+        AnimationComponent animation = Mappers.animation.get(player);
+        DirectionComponent direction = Mappers.direction.get(player);
 
-        shapeRenderer.rect(pos.x - size.width / 2, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), size.width, size.height + (circle == null ? 0 : circle.radius));
-        //super.update(deltaTime);
-        shapeRenderer.end();
+        animation.timeSinceStart += deltaTime;
+        AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
+
+        batch.draw(frame, pos.x - (size.width / 2) * direction.direction.mult, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+        batch.end();
 
         mapRenderer.renderForeground(viewport);
     }
 
 
     private float speed = 2;
+    private float desiredZoom = 1;
 
     private void setupCameraAndMatrices() {
         PositionComponent pos = Mappers.position.get(player);
         PlayerComponent p = Mappers.player.get(player);
-        if (p.energy.isSuperDashOn()) {
-            float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
-            ((OrthographicCamera) viewport.getCamera()).zoom += (1.1f - zoom) * .1f;
-        } else {
-            float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
-            ((OrthographicCamera) viewport.getCamera()).zoom += (1 - zoom) * .1f;
-        }
+
+        float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
+        ((OrthographicCamera) viewport.getCamera()).zoom = (1-.1f) * zoom + 0.1f * desiredZoom;
+
         viewport.getCamera().position.x += speed;
         viewport.getCamera().position.y = viewport.getWorldHeight() / 2;
-//        speed += 0.001f;
+
+        if(pos.x > viewport.getCamera().position.x + viewport.getWorldWidth() / 4) {
+            viewport.getCamera().position.x = pos.x - viewport.getWorldWidth() / 4;
+        }
 
         viewport.apply();
     }
@@ -104,4 +113,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.player = player;
     }
 
+    public void setDesiredZoom(float desiredZoom) {
+        this.desiredZoom = desiredZoom;
+    }
 }

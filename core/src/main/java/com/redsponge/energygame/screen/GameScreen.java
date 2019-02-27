@@ -26,6 +26,7 @@ import com.redsponge.energygame.utils.EntityFactory;
 public class GameScreen extends AbstractScreen {
 
     private Engine engine;
+    private FitViewport background;
     private FitViewport viewport;
     private FitViewport hudViewport;
     private TiledMap map;
@@ -34,6 +35,7 @@ public class GameScreen extends AbstractScreen {
     private MapManager mapManager;
 
     private Entity player;
+    private Color barColor;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -45,7 +47,8 @@ public class GameScreen extends AbstractScreen {
         assets.getResources();
 
         viewport = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
-        hudViewport = new FitViewport(Constants.HUD_WIDTH, Constants.HUD_HEIGHT);
+        background = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
+        hudViewport = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         scale = new ScalingViewport(Scaling.fill, 1, 1);
 
         engine = new Engine();
@@ -53,10 +56,10 @@ public class GameScreen extends AbstractScreen {
 
         PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null);
 
-        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/random1.tmx"), engine);
+        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/level1.tmx"), engine);
 
         ps.setMapManager(mapManager);
-        player = EntityFactory.getPlayer();
+        player = EntityFactory.getPlayer(assets);
 
         engine.addSystem(ps);
         engine.addEntityListener(Family.all(PositionComponent.class, PhysicsComponent.class).get(), ps);
@@ -65,13 +68,12 @@ public class GameScreen extends AbstractScreen {
         mapManager.setSystems(engine);
         mapManager.init();
 
-        mapManager.loadNextMap();
-
-        engine.addSystem(new PlayerSystem(this));
+        engine.addSystem(new PlayerSystem(this, assets));
         engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
-        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager));
+        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets));
 
         engine.addEntity(player);
+        barColor = new Color(0, 0, 0, 1);
     }
 
     @Override
@@ -85,11 +87,12 @@ public class GameScreen extends AbstractScreen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        scale.apply();
-        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+
+        background.apply();
+        shapeRenderer.setProjectionMatrix(background.getCamera().combined);
         shapeRenderer.begin(ShapeType.Filled);
         shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rect(0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+        shapeRenderer.rect(0, 0, background.getWorldWidth(), background.getWorldHeight());
         shapeRenderer.end();
 
         engine.update(delta);
@@ -99,21 +102,24 @@ public class GameScreen extends AbstractScreen {
 
     private void renderHUD() {
         hudViewport.apply();
+        shapeRenderer.setProjectionMatrix(hudViewport.getCamera().combined);
         batch.setProjectionMatrix(hudViewport.getCamera().combined);
 
-        batch.begin();
-        assets.getFonts().pixelMix.setColor(Color.BLACK);
-        assets.getFonts().pixelMix.getData().setScale(0.5f);
-        assets.getFonts().pixelMix.draw(batch, "Energy: " + energy, 10, hudViewport.getWorldHeight() - 30);
-        assets.getFonts().pixelMix.draw(batch, "Can Heat: " + (energy >= Constants.HEAT_THRESHOLD), 10, hudViewport.getWorldHeight() - 60);
-        assets.getFonts().pixelMix.draw(batch, "Can Light: " + (energy >= Constants.LIGHT_THRESHOLD), 10, hudViewport.getWorldHeight() - 90);
-        assets.getFonts().pixelMix.draw(batch, "Can Elec: " + (energy >= Constants.ELECTRIC_THRESHOLD), 10, hudViewport.getWorldHeight() - 120);
-        batch.end();
+        shapeRenderer.begin(ShapeType.Filled);
+        Color target = (energy < Constants.HEAT_THRESHOLD ? Color.GRAY : energy < Constants.LIGHT_THRESHOLD ? Color.ORANGE : energy < Constants.ELECTRIC_THRESHOLD ? Color.YELLOW : Color.BLUE);
+        barColor.lerp(target, 0.1f);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(10, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 20), 15);
+        shapeRenderer.setColor(barColor);
+        float progress = energy / Constants.MAX_ENERGY;
+        shapeRenderer.rect(15, hudViewport.getWorldHeight() - 15, (viewport.getWorldWidth() - 30) * progress, 5);
+        shapeRenderer.end();
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        background.update(width, height, true);
         hudViewport.update(width, height, true);
         scale.update(width, height, true);
     }
@@ -121,6 +127,7 @@ public class GameScreen extends AbstractScreen {
     public void addEnergy(float energy) {
         this.energy += energy;
         this.energy = this.energy < 0 ? 0 : this.energy;
+        this.energy = this.energy > Constants.MAX_ENERGY ? Constants.MAX_ENERGY : this.energy;
     }
 
     public float getEnergy() {

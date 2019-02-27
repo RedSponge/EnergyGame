@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.components.DirectionComponent.Direction;
 import com.redsponge.energygame.components.Mappers;
 import com.redsponge.energygame.components.PhysicsComponent;
 import com.redsponge.energygame.utils.Constants;
@@ -14,6 +15,7 @@ public class LightEnergy implements Energy {
 
     private long superDashStartTime;
     private Entity player;
+    private Direction dashDir;
 
     public LightEnergy() {
         superDashStartTime = 0;
@@ -27,6 +29,7 @@ public class LightEnergy implements Energy {
     public void regularInitiated(GameScreen gameScreen) {
         Gdx.app.log("LightEnergy", "Regular");
         superDashStartTime = TimeUtils.nanoTime();
+        dashDir = Mappers.direction.get(player).direction;
     }
 
     @Override
@@ -43,8 +46,7 @@ public class LightEnergy implements Energy {
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
         if(isDashOn()) {
-            physics.body.applyLinearImpulse(new Vector2(10, 0), physics.body.getLocalCenter(), true);
-            physics.body.setTransform(physics.body.getPosition().x + 1, physics.body.getPosition().y, 0);
+            physics.body.applyLinearImpulse(new Vector2(10 * dashDir.mult, 0), physics.body.getLocalCenter(), true);
         }
     }
 
