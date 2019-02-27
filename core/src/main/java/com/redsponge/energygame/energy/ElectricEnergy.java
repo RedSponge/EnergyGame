@@ -21,7 +21,7 @@ public class ElectricEnergy implements Energy {
 
     public ElectricEnergy() {
         protectionStartTime = 0;
-        protectionLength = 2;
+        protectionLength = 5;
     }
 
     public void setPlayer(Entity player) {
@@ -31,6 +31,11 @@ public class ElectricEnergy implements Energy {
     @Override
     public void regularInitiated(GameScreen gameScreen) {
         Gdx.app.log("ElectricEnergy", "Regular");
+        if(gameScreen.getEnergy() > Constants.ELECTRIC_THRESHOLD) {
+            gameScreen.addEnergy(-50);
+        } else {
+            return;
+        }
         if(GeneralUtils.secondsSince(protectionStartTime) > protectionLength) {
             FixtureDef fdef = new FixtureDef();
             fdef.isSensor = true;

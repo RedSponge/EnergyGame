@@ -1,12 +1,47 @@
 
 game_textures.png
-size: 512,64
+size: 256,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-player/high/idle
+player/high/dash
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+player/high/dash
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+player/high/dash
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+player/high/dash
   rotate: false
   xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+player/high/dash_prep
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+player/high/idle
+  rotate: false
+  xy: 70, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -20,90 +55,125 @@ player/high/run
   index: 1
 player/high/run
   rotate: false
-  xy: 70, 2
+  xy: 70, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
 player/high/run
   rotate: false
-  xy: 104, 2
+  xy: 104, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 3
 player/high/run
   rotate: false
-  xy: 104, 2
+  xy: 104, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 9
 player/high/run
   rotate: false
-  xy: 138, 2
+  xy: 70, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 4
 player/high/run
   rotate: false
-  xy: 172, 2
+  xy: 104, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 5
 player/high/run
   rotate: false
-  xy: 206, 2
+  xy: 138, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 6
 player/high/run
   rotate: false
-  xy: 240, 2
+  xy: 104, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 7
 player/high/run
   rotate: false
-  xy: 274, 2
+  xy: 138, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 8
 player/high/run
   rotate: false
-  xy: 308, 2
+  xy: 172, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 10
 player/high/run
   rotate: false
-  xy: 342, 2
+  xy: 138, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 11
 player/high/run
   rotate: false
-  xy: 376, 2
+  xy: 172, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 12
 
 game_textures2.png
-size: 512,64
+size: 256,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-player/low/idle
+player/low/dash
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+player/low/dash
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+player/low/dash
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+player/low/dash
   rotate: false
   xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+player/low/dash_prep
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+player/low/idle
+  rotate: false
+  xy: 70, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -117,90 +187,125 @@ player/low/run
   index: 1
 player/low/run
   rotate: false
-  xy: 70, 2
+  xy: 70, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
 player/low/run
   rotate: false
-  xy: 104, 2
+  xy: 104, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 3
 player/low/run
   rotate: false
-  xy: 138, 2
+  xy: 70, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 4
 player/low/run
   rotate: false
-  xy: 172, 2
+  xy: 104, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 5
 player/low/run
   rotate: false
-  xy: 206, 2
+  xy: 138, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 6
 player/low/run
   rotate: false
-  xy: 240, 2
+  xy: 104, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 7
 player/low/run
   rotate: false
-  xy: 274, 2
+  xy: 138, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 8
 player/low/run
   rotate: false
-  xy: 308, 2
+  xy: 172, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 9
 player/low/run
   rotate: false
-  xy: 342, 2
+  xy: 138, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 10
 player/low/run
   rotate: false
-  xy: 376, 2
+  xy: 172, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 11
 player/low/run
   rotate: false
-  xy: 410, 2
+  xy: 206, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 12
 
 game_textures3.png
-size: 512,64
+size: 256,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-player/med/idle
+player/med/dash
+  rotate: false
+  xy: 2, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 1
+player/med/dash
+  rotate: false
+  xy: 2, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 2
+player/med/dash
+  rotate: false
+  xy: 36, 70
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 3
+player/med/dash
   rotate: false
   xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: 4
+player/med/dash_prep
+  rotate: false
+  xy: 36, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+player/med/idle
+  rotate: false
+  xy: 70, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -214,77 +319,77 @@ player/med/run
   index: 1
 player/med/run
   rotate: false
-  xy: 70, 2
+  xy: 70, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 2
 player/med/run
   rotate: false
-  xy: 104, 2
+  xy: 104, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 3
 player/med/run
   rotate: false
-  xy: 138, 2
+  xy: 70, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 4
 player/med/run
   rotate: false
-  xy: 172, 2
+  xy: 104, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 5
 player/med/run
   rotate: false
-  xy: 206, 2
+  xy: 138, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 6
 player/med/run
   rotate: false
-  xy: 240, 2
+  xy: 104, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 7
 player/med/run
   rotate: false
-  xy: 274, 2
+  xy: 138, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 8
 player/med/run
   rotate: false
-  xy: 308, 2
+  xy: 172, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 9
 player/med/run
   rotate: false
-  xy: 342, 2
+  xy: 138, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 10
 player/med/run
   rotate: false
-  xy: 376, 2
+  xy: 172, 36
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: 11
 player/med/run
   rotate: false
-  xy: 410, 2
+  xy: 206, 70
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

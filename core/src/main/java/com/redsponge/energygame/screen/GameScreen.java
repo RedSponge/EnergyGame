@@ -36,6 +36,7 @@ public class GameScreen extends AbstractScreen {
 
     private Entity player;
     private Color barColor;
+    private float displayedEnergy;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -74,11 +75,13 @@ public class GameScreen extends AbstractScreen {
 
         engine.addEntity(player);
         barColor = new Color(0, 0, 0, 1);
+
+        displayedEnergy = 0;
     }
 
     @Override
     public void tick(float delta) {
-
+//        addEnergy(3);
     }
 
     @Override
@@ -91,7 +94,7 @@ public class GameScreen extends AbstractScreen {
         background.apply();
         shapeRenderer.setProjectionMatrix(background.getCamera().combined);
         shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.WHITE);
+        shapeRenderer.setColor(Color.GRAY);
         shapeRenderer.rect(0, 0, background.getWorldWidth(), background.getWorldHeight());
         shapeRenderer.end();
 
@@ -111,7 +114,8 @@ public class GameScreen extends AbstractScreen {
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(10, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 20), 15);
         shapeRenderer.setColor(barColor);
-        float progress = energy / Constants.MAX_ENERGY;
+        displayedEnergy = (1-0.1f) * displayedEnergy + 0.1f * energy;
+        float progress = displayedEnergy / Constants.MAX_ENERGY;
         shapeRenderer.rect(15, hudViewport.getWorldHeight() - 15, (viewport.getWorldWidth() - 30) * progress, 5);
         shapeRenderer.end();
     }

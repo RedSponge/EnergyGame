@@ -19,6 +19,15 @@ public class Textures implements AssetLoader {
     public AtlasRegion medIdle;
     public AtlasRegion highIdle;
 
+    public AtlasRegion lowDashPrep;
+    public AtlasRegion medDashPrep;
+    public AtlasRegion highDashPrep;
+
+    public Animation<AtlasRegion> lowDash;
+    public Animation<AtlasRegion> medDash;
+    public Animation<AtlasRegion> highDash;
+
+
     @Override
     public void load(AssetManager am) {
         Gdx.app.log("Textures", "Loading Textures!");
@@ -37,6 +46,14 @@ public class Textures implements AssetLoader {
         lowIdle = textures.findRegion("player/low/idle");
         medIdle = textures.findRegion("player/med/idle");
         highIdle = textures.findRegion("player/high/idle");
+
+        lowDashPrep = textures.findRegion("player/low/dash_prep");
+        medDashPrep = textures.findRegion("player/med/dash_prep");
+        highDashPrep = textures.findRegion("player/high/dash_prep");
+
+        lowDash = load(textures, 4, "player/low/dash");
+        medDash = load(textures, 4, "player/med/dash");
+        highDash = load(textures, 4, "player/high/dash");
     }
 
     public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name) {

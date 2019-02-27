@@ -28,8 +28,11 @@ public class LightEnergy implements Energy {
     @Override
     public void regularInitiated(GameScreen gameScreen) {
         Gdx.app.log("LightEnergy", "Regular");
-        superDashStartTime = TimeUtils.nanoTime();
-        dashDir = Mappers.direction.get(player).direction;
+        if(gameScreen.getEnergy() > Constants.LIGHT_THRESHOLD) {
+            gameScreen.addEnergy(-20);
+            superDashStartTime = TimeUtils.nanoTime();
+            dashDir = Mappers.direction.get(player).direction;
+        }
     }
 
     @Override
@@ -46,7 +49,7 @@ public class LightEnergy implements Energy {
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
         if(isDashOn()) {
-            physics.body.applyLinearImpulse(new Vector2(10 * dashDir.mult, 0), physics.body.getLocalCenter(), true);
+            physics.body.applyLinearImpulse(new Vector2(2 * dashDir.mult, 0), physics.body.getLocalCenter(), true);
         }
     }
 
@@ -56,6 +59,6 @@ public class LightEnergy implements Energy {
     }
 
     public boolean isDashOn() {
-        return GeneralUtils.secondsSince(superDashStartTime) < 0.1f;
+        return GeneralUtils.secondsSince(superDashStartTime) < 0.2f;
     }
 }

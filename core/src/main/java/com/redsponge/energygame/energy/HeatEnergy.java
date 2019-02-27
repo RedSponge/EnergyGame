@@ -39,6 +39,11 @@ public class HeatEnergy implements Energy {
 
     @Override
     public void regularInitiated(GameScreen gameScreen) {
+        if(gameScreen.getEnergy() > Constants.HEAT_THRESHOLD) {
+            gameScreen.addEnergy(-5);
+        } else {
+            return;
+        }
         if(regular != null) {
             regularStartTime = TimeUtils.nanoTime();
             //TODO: Decrease Energy For Renewing
@@ -89,12 +94,6 @@ public class HeatEnergy implements Energy {
             physics.body.destroyFixture(regular);
             Gdx.app.log("HeatEnergy", "Removed Regular Attack");
             regular = null;
-        }
-        if(isJumpOn()) {
-            physics.body.setLinearVelocity(physics.body.getLinearVelocity().x, 20);
-//            physics.body.setTransform(physics.body.getPosition().lerp(new Vector2(physics.body.getPosition().x, wantedY), 0.4f), 0);
-        } else {
-            wantedY = 0;
         }
     }
 

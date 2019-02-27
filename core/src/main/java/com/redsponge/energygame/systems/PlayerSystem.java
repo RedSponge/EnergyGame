@@ -76,7 +76,7 @@ public class PlayerSystem extends IteratingSystem {
         this.lastMoved = 0;
 
 
-        this.energy = new EnergyManager(pixelsPerMeter);
+        this.energy = new EnergyManager(gameScreen, pixelsPerMeter);
     }
 
     public PlayerSystem(GameScreen gameScreen, Assets assets) {
@@ -108,19 +108,31 @@ public class PlayerSystem extends IteratingSystem {
 
         clampSpeed(body);
 
-        updateAnimation(entity, body);
+        updateAnimation(entity, player, body);
     }
 
-    private void updateAnimation(Entity entity, Body body) {
+    private void updateAnimation(Entity entity, PlayerComponent playerC, Body body) {
         AnimationComponent animation = Mappers.animation.get(entity);
         boolean idle = body.getLinearVelocity().x == 0;
 
         if(gameScreen.getEnergy() < Constants.LIGHT_THRESHOLD) {
-            animation.animation = assets.getTextures().lowRun;
+            if(playerC.energy.isSuperDashOn()) {
+                animation.animation = assets.getTextures().lowDash;
+            } else {
+                animation.animation = assets.getTextures().lowRun;
+            }
         } else if(gameScreen.getEnergy() < Constants.ELECTRIC_THRESHOLD) {
-            animation.animation = assets.getTextures().medRun;
+            if(playerC.energy.isSuperDashOn()) {
+                animation.animation = assets.getTextures().medDash;
+            } else {
+                animation.animation = assets.getTextures().medRun;
+            }
         } else {
-            animation.animation = assets.getTextures().highRun;
+            if(playerC.energy.isSuperDashOn()) {
+                animation.animation = assets.getTextures().highDash;
+            } else {
+                animation.animation = assets.getTextures().highRun;
+            }
         }
     }
 
@@ -196,7 +208,7 @@ public class PlayerSystem extends IteratingSystem {
                 takeControlWhileWallJump = false;
             }
             wallJumpStartTime = TimeUtils.nanoTime();
-            body.setLinearVelocity(5 * side, 10);
+            body.setLinearVelocity(5 * side, 15);
         }
         if(GeneralUtils.secondsSince(wallJumpStartTime) > wallJumpLength) {
             takeControlWhileWallJump = false;
@@ -215,9 +227,6 @@ public class PlayerSystem extends IteratingSystem {
 
             if(horiz != 0) {
                 if(horiz != Math.signum(body.getLinearVelocity().x)) {
-                    if(body.getLinearVelocity().x != 0) {
-                        gameScreen.addEnergy(-3f);
-                    }
                     body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * Constants.CHANGE_DIRECTION_MULTIPLIER, 0), body.getWorldCenter(), true);
                 } else {
                     body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * energyMultiplier, 0), body.getWorldCenter(), true);
@@ -256,7 +265,7 @@ public class PlayerSystem extends IteratingSystem {
      */
     private void updateFallVelocity(Body body) {
         if(GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength) {
-            body.applyLinearImpulse(new Vector2(0, fallAmplifier / 2), body.getWorldCenter(), true);
+            body.applyLinearImpulse(new Vector2(0, 0), body.getWorldCenter(), true);
         } else if(!onGround && !jumping) {
             body.applyLinearImpulse(new Vector2(0, fallAmplifier), body.getWorldCenter(), true);
         }
@@ -280,7 +289,7 @@ public class PlayerSystem extends IteratingSystem {
         {
             newVx = maxSpeed * Math.signum(newVx);
         }
-        if(Math.abs(newVy) > maxSpeed && !energy.isSuperJumpOn() && !jumping)
+        if(newVy > maxSpeed && !energy.isSuperJumpOn() && !jumping)
         {
             newVy = maxSpeed * Math.signum(newVy);
         }
