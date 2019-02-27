@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Array.ArrayIterator;
 import com.redsponge.energygame.components.ChainComponent;
 import com.redsponge.energygame.components.CircleBottomComponent;
@@ -46,6 +47,11 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private Vector2 gravity;
     private World world;
     private float pixelsPerMeter;
+
+    /**
+     * The map manager
+     * <bold>Must be set BEFORE the system is added to the engine!</bold>
+     */
     private MapManager mapManager;
 
     public PhysicsSystem(Vector2 gravity, float pixelsPerMeter, MapManager mapManager) {
@@ -58,6 +64,10 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
 
     public PhysicsSystem(MapManager mapManager) {
         this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM, mapManager);
+    }
+
+    public void setMapManager(MapManager mapManager) {
+        this.mapManager = mapManager;
     }
 
     @Override
@@ -95,35 +105,40 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
      * Create the platforms for the world
      * @param map - The world map
      */
-    public void createWorldPlatforms(TiledMap map, int offset) {
+    public Entity[] createWorldPlatforms(TiledMap map, int offset) {
+        Array<Entity> entities = new Array<Entity>();
         MapLayer layer = map.getLayers().get("Collidables");
-
-        for (PolylineMapObject obj : new ArrayIterator<PolylineMapObject>(layer.getObjects().getByType(PolylineMapObject.class))) {
-            Entity platform = PlatformFactory.createChainFloor(GeneralUtils.transformAll(obj.getPolyline().getTransformedVertices(), offset, 0));
-            this.getEngine().addEntity(platform);
-        }
         for (PolygonMapObject obj : new ArrayIterator<PolygonMapObject>(layer.getObjects().getByType(PolygonMapObject.class))) {
             Entity platform = PlatformFactory.createChainFloor(GeneralUtils.transformAll(obj.getPolygon().getTransformedVertices(), offset, 0));
+            entities.add(platform);
             this.getEngine().addEntity(platform);
         }
+        return entities.toArray(Entity.class);
     }
 
-    public void createWorldEnemies(TiledMap map, float offset) {
+    public Entity[] createWorldEnemies(TiledMap map, float offset) {
+        Array<Entity> entities = new Array<Entity>();
         MapLayer layer = map.getLayers().get("Enemies");
         for(RectangleMapObject enemy : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
             Rectangle rect = enemy.getRectangle();
             Entity e = EntityFactory.getEnemy(rect.x + offset, rect.y, 30, 30);
+            entities.add(e);
             this.getEngine().addEntity(e);
         }
+        return entities.toArray(Entity.class);
     }
 
-    public void createWorldEvents(TiledMap map, float offset) {
+    public Entity[] createWorldEvents(TiledMap map, float offset) {
+        Array<Entity> entities = new Array<Entity>();
         MapLayer layer = map.getLayers().get("Events");
         for(RectangleMapObject event : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
             Rectangle rect = event.getRectangle();
             Entity e = EntityFactory.getEventEntity(rect.x + offset, rect.y, rect.width, rect.height, event.getProperties().get("type", String.class));
+            entities.add(e);
             this.getEngine().addEntity(e);
         }
+        //TODO: Get bodies!
+        return entities.toArray(Entity.class);
     }
 
     /**
@@ -233,9 +248,11 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         return this.world;
     }
 
-    public void loadNewMap(TiledMap map, int offset) {
-        createWorldPlatforms(map, offset);
-        createWorldEnemies(map, offset);
-        createWorldEvents(map, offset);
+    public Entity[] loadNewMap(TiledMap map, int offset) {
+        Array<Entity> entities = new Array<Entity>();
+        entities.addAll(createWorldPlatforms(map, offset));
+        entities.addAll(createWorldEnemies(map, offset));
+        entities.addAll(createWorldEvents(map, offset));
+        return entities.toArray(Entity.class);
     }
 }

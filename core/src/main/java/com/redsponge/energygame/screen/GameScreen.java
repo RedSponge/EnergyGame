@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -49,20 +50,26 @@ public class GameScreen extends AbstractScreen {
 
         engine = new Engine();
 
-        mapManager = new MapManager();
 
-        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, mapManager);
+        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null);
+
+        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/random1.tmx"), engine);
+
+        ps.setMapManager(mapManager);
+        player = EntityFactory.getPlayer();
+
         engine.addSystem(ps);
         engine.addEntityListener(Family.all(PositionComponent.class, PhysicsComponent.class).get(), ps);
-        engine.addSystem(new PlayerSystem(this));
-        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
 
-
-        player = EntityFactory.getPlayer();
-        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player));
 
         mapManager.setSystems(engine);
+        mapManager.init();
+
         mapManager.loadNextMap();
+
+        engine.addSystem(new PlayerSystem(this));
+        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager));
 
         engine.addEntity(player);
     }

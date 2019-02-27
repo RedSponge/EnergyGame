@@ -1,38 +1,71 @@
 package com.redsponge.energygame.maps;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.utils.Disposable;
 import com.redsponge.energygame.systems.PhysicsSystem;
-import com.redsponge.energygame.systems.RenderingSystem;
 
-public class MapManager {
+public class MapManager implements Disposable {
 
     private int currentMapOffset = 0;
-    private TiledMap currentMap;
+    private MapHolder current;
+    private MapHolder tail, head;
     private PhysicsSystem ps;
-    private RenderingSystem rs;
+    private Engine engine;
 
-    public void loadNextMap() {
-        if(currentMap != null) {
-            MapProperties prop = currentMap.getProperties();
-            currentMapOffset += prop.get("width", Integer.class) * prop.get("tilewidth", Integer.class);
-        }
-        currentMap = loadMap("maps/random1.tmx");
-        ps.loadNewMap(currentMap, currentMapOffset);
-        rs.setCurrentMap(currentMap);
-        rs.setCurrentMapOffset(currentMapOffset);
-
-        // TODO: Set map and offset for systems
+    public MapManager(PhysicsSystem ps, TiledMap initialMap, Engine engine) {
+        this.engine = engine;
+        this.currentMapOffset = 0;
+        this.ps = ps;
+        this.head = new MapHolder(initialMap, ps, 0, this.engine);
     }
 
-    public static TiledMap loadMap(String path) {
-        return new TmxMapLoader().load(path);
+    public void init() {
+        this.head.setEntities(ps.loadNewMap(head.getMap(), 0));
+    }
+
+    public void loadNextMap() {
+        if(tail != null) {
+            Gdx.app.log("MapManager", "Disposing Tail!");
+            tail.dispose();
+        }
+        if(current != null) {
+            MapProperties prop = current.getMap().getProperties();
+            currentMapOffset += prop.get("width", Integer.class) * prop.get("tilewidth", Integer.class);
+
+            tail = current;
+        }
+        current = head;
+
+        head = loadMap("maps/random1.tmx");
+        head.setEntities(ps.loadNewMap(head.getMap(), currentMapOffset));
+    }
+
+    private MapHolder loadMap(String path) {
+        return new MapHolder(new TmxMapLoader().load(path), ps, currentMapOffset, engine);
     }
 
     public void setSystems(Engine engine) {
         this.ps = engine.getSystem(PhysicsSystem.class);
-        this.rs = engine.getSystem(RenderingSystem.class);
+    }
+
+    public MapHolder getCurrentMap() {
+        return current;
+    }
+
+    public MapHolder getHeadMap() {
+        return head;
+    }
+    public MapHolder getTailMap() {
+        return tail;
+    }
+
+    public void dispose() {
+        head.dispose();
+        current.dispose();
+        tail.dispose();
     }
 }

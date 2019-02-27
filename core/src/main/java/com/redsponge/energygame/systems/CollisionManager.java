@@ -19,13 +19,11 @@ import com.redsponge.energygame.utils.Pair;
 public class CollisionManager implements ContactListener {
 
     private Engine engine;
-    private PhysicsSystem physicsSystem;
     private MapManager mapManager;
 
     public CollisionManager(Engine engine, MapManager mapManager) {
         this.engine = engine;
         this.mapManager = mapManager;
-        this.physicsSystem = this.engine.getSystem(PhysicsSystem.class);
     }
 
     @Override
