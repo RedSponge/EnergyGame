@@ -14,18 +14,14 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.redsponge.energygame.comparators.MapLayerComparator;
 import com.redsponge.energygame.comparators.ZComparator;
-import com.redsponge.energygame.components.CircleBottomComponent;
-import com.redsponge.energygame.components.Mappers;
-import com.redsponge.energygame.components.PlayerComponent;
-import com.redsponge.energygame.components.PositionComponent;
-import com.redsponge.energygame.components.SizeComponent;
+import com.redsponge.energygame.components.*;
 import com.redsponge.energygame.utils.Constants;
+import com.redsponge.energygame.maps.OffsettedOrthogonalTiledMapRenderer;
 
 public class RenderingSystem extends SortedIteratingSystem {
 
@@ -36,7 +32,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     private Viewport viewport;
 
     private TiledMap map;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private OffsettedOrthogonalTiledMapRenderer mapRenderer;
 
     private int backgroundForegroundSeparator;
 
@@ -87,6 +83,9 @@ public class RenderingSystem extends SortedIteratingSystem {
 
         // TODO: Render all entities based on texture / animation components
 
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+
         shapeRenderer.begin(ShapeType.Filled);
         shapeRenderer.setColor(Color.GRAY);
         SizeComponent size = Mappers.size.get(player);
@@ -118,13 +117,11 @@ public class RenderingSystem extends SortedIteratingSystem {
 //        speed += 0.001f;
 
         viewport.apply();
-        mapRenderer.setView((OrthographicCamera) viewport.getCamera());
-
-        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
     }
 
     private void renderBackground() {
+        mapRenderer.setOffsetX(currentMapOffset);
+        mapRenderer.setView((OrthographicCamera) viewport.getCamera());
         batch.begin();
         for(int i = 0; i < backgroundForegroundSeparator; i++) {
             mapRenderer.renderTileLayer(renderLayers[i]);
@@ -162,7 +159,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     public void setCurrentMap(TiledMap currentMap) {
         this.map = currentMap;
         if (this.mapRenderer == null) {
-            this.mapRenderer = new OrthogonalTiledMapRenderer(this.map, this.batch);
+            this.mapRenderer = new OffsettedOrthogonalTiledMapRenderer(this.map, this.batch);
         } else {
             this.mapRenderer.setMap(map);
         }
