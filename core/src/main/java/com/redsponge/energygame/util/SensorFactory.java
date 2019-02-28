@@ -31,7 +31,7 @@ public class SensorFactory {
             height = h / Constants.DETECTOR_HEIGHT;
         } else {
             width = w / Constants.DETECTOR_HEIGHT;
-            height = h / Constants.DETECTOR_WIDTH;
+            height = h / Constants.DETECTOR_WIDTH - 10;
         }
 
         width /= ppm;

@@ -34,8 +34,6 @@ public class PlayerSystem extends IteratingSystem {
     private boolean takeControlWhileWallJump;
     private float wallHoldVelocity;
 
-    private float pixelsPerMeter;
-
 
     private float fallAmplifier;
 
@@ -63,7 +61,6 @@ public class PlayerSystem extends IteratingSystem {
         this.speed = speed;
         this.maxSpeed = maxSpeed;
         this.jumpMaxTime = jumpMaxTime;
-        this.pixelsPerMeter = pixelsPerMeter;
         this.fallAmplifier = fallAmplifier;
         this.wallHoldVelocity = wallHoldVelocity;
         this.input = inputSystem;
@@ -97,7 +94,6 @@ public class PlayerSystem extends IteratingSystem {
 
         updateJumping(body, deltaTime);
         updateWallJumping(collider, body);
-        // TODO: Add Power System, inputs are done.
 
         updateStrafing(entity, body, deltaTime);
         updateAttacks();
@@ -203,11 +199,10 @@ public class PlayerSystem extends IteratingSystem {
         if(input.isJustJumping() && !jumping && holdingWall) {
             int side = collider.rightTouches > 0 ? -1 : 1;
             if(input.getHorizontal() != 0) {
-                takeControlWhileWallJump = true;
+                takeControlWhileWallJump = false;
             } else {
                 takeControlWhileWallJump = false;
             }
-            wallJumpStartTime = TimeUtils.nanoTime();
             body.setLinearVelocity(5 * side, 15);
         }
         if(GeneralUtils.secondsSince(wallJumpStartTime) > wallJumpLength) {
@@ -285,7 +280,7 @@ public class PlayerSystem extends IteratingSystem {
         float newVx = body.getLinearVelocity().x;
         float newVy = body.getLinearVelocity().y;
 
-        if(Math.abs(newVx) > maxSpeed && !energy.isSuperDashOn())
+        if(Math.abs(newVx) > maxSpeed && !energy.isSuperDashOn() && !jumping)
         {
             newVx = maxSpeed * Math.signum(newVx);
         }

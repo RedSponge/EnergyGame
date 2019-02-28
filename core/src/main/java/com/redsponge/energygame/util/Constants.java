@@ -1,5 +1,6 @@
 package com.redsponge.energygame.util;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.redsponge.energygame.system.PhysicsSystem;
 
@@ -33,7 +34,7 @@ public class Constants {
     public static final float FRICTION_MULTIPLIER = 0.9f;
     public static final float CHANGE_DIRECTION_MULTIPLIER = 10;
 
-    public static final float DEFAULT_FALL_AMPLIFIER = -0.5f; // Added to the gravity when the player is falling
+    public static final float DEFAULT_FALL_AMPLIFIER = -0.3f; // Added to the gravity when the player is falling
 
     public static final float DEFAULT_JUMP_HEIGHT = 10;
     public static final float DEFAULT_PLAYER_SPEED = 2;
@@ -43,11 +44,15 @@ public class Constants {
     public static final float GAME_WIDTH = 384;
     public static final float GAME_HEIGHT = 216;
 
-    public static final int HEAT_THRESHOLD = 10;
-    public static final int LIGHT_THRESHOLD = 50;
-    public static final int ELECTRIC_THRESHOLD = 90;
 
-    public static final float HUD_WIDTH = 640;
-    public static final float HUD_HEIGHT = 480;
-    public static final float MAX_ENERGY = 100;
+    public static final float MAX_ENERGY = 200;
+
+    public static final int HEAT_THRESHOLD = (int) MAX_ENERGY / 10;
+    public static final int LIGHT_THRESHOLD = (int) MAX_ENERGY / 2;
+    public static final int ELECTRIC_THRESHOLD = (int) MAX_ENERGY / 10 * 9;
+
+    public static final Color NONE_COLOR = new Color(0x474747FF);
+    public static final Color HEAT_COLOR = new Color(0xc18255FF);
+    public static final Color LIGHT_COLOR = new Color(0xede07dFF);
+    public static final Color ENERGY_COLOR = new Color(0x474747FF);
 }

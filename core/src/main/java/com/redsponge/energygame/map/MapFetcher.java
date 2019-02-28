@@ -1,15 +1,20 @@
 package com.redsponge.energygame.map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.redsponge.energygame.util.GeneralUtils;
 
 public class MapFetcher {
 
+    private static final String[] EASY_MAPS = {"cave", "cliff", "enemy_of_the_hill", "science_of_death"};
+    private static String lastChosen = EASY_MAPS[0];
+
     public static String getEasyMap() {
-        FileHandle handles = Gdx.files.local("../assets/maps/easy");
-        FileHandle handle = GeneralUtils.randomFromArr(handles.list());
-        return handle.path().substring("../assets/".length());
+        String choice = "";
+        do {
+            choice = GeneralUtils.randomFromArr(EASY_MAPS);
+        } while(choice.equals(lastChosen));
+        lastChosen = choice;
+        System.out.println(choice);
+        return "maps/easy/" + "science_of_death" + ".tmx";
     }
 
 }

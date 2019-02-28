@@ -40,7 +40,11 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     private PooledEffect sparkParticle;
     private PooledEffect electricParticle;
+
     private GameScreen gameScreen;
+
+    private boolean sparkNeedsRestart;
+    private boolean electricNeedsRestart;
 
     public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, MapManager mapManager, Assets assets, GameScreen gameScreen) {
         super(Family.all(PositionComponent.class, SizeComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
@@ -52,8 +56,12 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.assets = assets;
         this.gameScreen = gameScreen;
         this.mapRenderer = new MapManagerRenderer(mapManager, batch);
-        xMode = yMode = CameraMode.AUTO;
-        sparkParticle = assets.getParticles().sparkle.spawn(new Vector2());
+        this.xMode = this.yMode = CameraMode.AUTO;
+        this.sparkParticle = assets.getParticles().sparkle.spawn(new Vector2(), 0);
+        this.sparkNeedsRestart = true;
+
+        this.electricParticle = assets.getParticles().electric.spawn(new Vector2(), 0);
+        this.electricNeedsRestart = true;
     }
 
 
@@ -76,13 +84,34 @@ public class RenderingSystem extends SortedIteratingSystem {
         PlayerComponent pc = Mappers.player.get(player);
 
         sparkParticle.setPosition(pos.x, pos.y);
+        electricParticle.setPosition(pos.x, pos.y);
         assets.getParticles().render(deltaTime, batch);
 
         float energy = gameScreen.getEnergy();
 
-        if(sparkParticle.isComplete()) {
+        if(sparkParticle.isComplete() || sparkNeedsRestart) {
             if(energy > Constants.HEAT_THRESHOLD) {
+                if (sparkNeedsRestart) {
+                    sparkNeedsRestart = false;
+                    sparkParticle = assets.getParticles().sparkle.spawn(new Vector2());
+                } else {
+                    sparkParticle.reset();
+                }
+            } else {
+                sparkNeedsRestart = true;
+            }
+        }
 
+        if(electricParticle.isComplete() || electricNeedsRestart) {
+            if(energy > Constants.ELECTRIC_THRESHOLD) {
+                if (electricNeedsRestart) {
+                    electricNeedsRestart = false;
+                    electricParticle = assets.getParticles().electric.spawn(new Vector2());
+                } else {
+                    electricParticle.reset();
+                }
+            } else {
+                electricNeedsRestart = true;
             }
         }
 
@@ -92,14 +121,14 @@ public class RenderingSystem extends SortedIteratingSystem {
         animation.timeSinceStart += deltaTime;
         AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
 
-        batch.draw(frame, pos.x - (size.width / 2) * direction.direction.mult, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+        batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
         batch.end();
 
         mapRenderer.renderForeground(viewport);
     }
 
 
-    private float speed = 2;
+    private float speed = 1;
     private float desiredZoom = 1;
 
     private void setupCameraAndMatrices() {

@@ -30,7 +30,7 @@ public class GeneralUtils {
         return n;
     }
 
-    public static FileHandle randomFromArr(FileHandle[] list) {
+    public static <T> T randomFromArr(T[] list) {
         return list[random.nextInt(list.length)];
     }
 }

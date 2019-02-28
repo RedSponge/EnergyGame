@@ -133,7 +133,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         MapLayer layer = map.getLayers().get("Events");
         for(RectangleMapObject event : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
             Rectangle rect = event.getRectangle();
-            Entity e = EntityFactory.getEventEntity(rect.x + offset, rect.y, rect.width, rect.height, event.getProperties());
+            Entity e = EntityFactory.getEventEntity(rect.x + offset + rect.width / 2, rect.y + rect.height / 2, rect.width, rect.height, event.getProperties());
             entities.add(e);
             this.getEngine().addEntity(e);
         }

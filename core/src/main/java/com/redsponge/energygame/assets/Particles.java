@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 public class Particles implements AssetLoader {
 
     public ParticleManager sparkle;
-    public ParticleManager lightning;
+    public ParticleManager electric;
 
     public Particles() {
         sparkle = new ParticleManager("sparkle.p");
-        lightning = new ParticleManager("lightning.p");
+        electric = new ParticleManager("electric.p");
     }
 
     @Override
@@ -26,16 +26,16 @@ public class Particles implements AssetLoader {
         Gdx.app.log("Particles", "Retrieving Particles");
         TextureAtlas atlas = am.get("particles/textures.atlas", TextureAtlas.class);
         sparkle.getResources(atlas);
-        lightning.getResources(atlas);
+        electric.getResources(atlas);
     }
 
     public void render(float delta, SpriteBatch batch) {
         sparkle.render(delta, batch);
-        lightning.render(delta, batch);
+        electric.render(delta, batch);
     }
 
     public void cleanUp() {
         sparkle.cleanUp();
-        lightning.cleanUp();
+        electric.cleanUp();
     }
 }

@@ -76,7 +76,7 @@ public class GameScreen extends AbstractScreen {
 
         engine.addSystem(new PlayerSystem(this, assets));
         engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
-        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, gameScreen));
+        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
         engine.addEntity(player);
         barColor = new Color(0, 0, 0, 1);
@@ -123,7 +123,7 @@ public class GameScreen extends AbstractScreen {
         batch.setProjectionMatrix(hudViewport.getCamera().combined);
 
         shapeRenderer.begin(ShapeType.Filled);
-        Color target = (energy < Constants.HEAT_THRESHOLD ? Color.GRAY : energy < Constants.LIGHT_THRESHOLD ? Color.ORANGE : energy < Constants.ELECTRIC_THRESHOLD ? Color.YELLOW : Color.BLUE);
+        Color target = (energy < Constants.HEAT_THRESHOLD ? Constants.NONE_COLOR : energy < Constants.LIGHT_THRESHOLD ? Constants.HEAT_COLOR : energy < Constants.ELECTRIC_THRESHOLD ? Constants.LIGHT_COLOR : Constants.ENERGY_COLOR);
         barColor.lerp(target, 0.1f);
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(10, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 20), 15);
