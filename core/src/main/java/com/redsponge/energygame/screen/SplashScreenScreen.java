@@ -31,13 +31,12 @@ public class SplashScreenScreen extends AbstractScreen {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.8f, 0.25f, 0f, 1);
+        Gdx.gl.glClearColor(255/255f, 237/255f, 178/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if(!splashScreenRenderer.isComplete() && !Gdx.input.isKeyJustPressed(Keys.SPACE)) {
             splashScreenRenderer.render();
         } else if(!transitioning) {
-            assets.getResources();
             ga.transitionTo(new MenuScreen(ga), new TransitionFade(), 2);
         }
     }

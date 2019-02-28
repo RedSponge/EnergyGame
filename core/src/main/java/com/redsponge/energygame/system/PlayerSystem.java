@@ -111,24 +111,36 @@ public class PlayerSystem extends IteratingSystem {
         AnimationComponent animation = Mappers.animation.get(entity);
         boolean idle = body.getLinearVelocity().x == 0;
 
-        if(gameScreen.getEnergy() < Constants.LIGHT_THRESHOLD) {
-            if(playerC.energy.isSuperDashOn()) {
+        if(gameScreen.getEnergy() < Constants.HEAT_THRESHOLD) {
+            animation.animation = assets.getTextures().noneRun;
+        } else if(gameScreen.getEnergy() < Constants.LIGHT_THRESHOLD) {
+            if(playerC.energy.isHeatPunchOn()) {
+                animation.animation = assets.getTextures().lowAttack;
+            } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().lowDash;
             } else {
                 animation.animation = assets.getTextures().lowRun;
             }
         } else if(gameScreen.getEnergy() < Constants.ELECTRIC_THRESHOLD) {
-            if(playerC.energy.isSuperDashOn()) {
+            if(playerC.energy.isHeatPunchOn()) {
+                animation.animation = assets.getTextures().medAttack;
+            } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().medDash;
             } else {
                 animation.animation = assets.getTextures().medRun;
             }
         } else {
-            if(playerC.energy.isSuperDashOn()) {
+            if(playerC.energy.isHeatPunchOn()) {
+                animation.animation = assets.getTextures().highAttack;
+            } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().highDash;
             } else {
                 animation.animation = assets.getTextures().highRun;
             }
+        }
+
+        if(playerC.energy.isChargingElectricField()) {
+            animation.animation = assets.getTextures().highElectricStart;
         }
     }
 
@@ -204,6 +216,7 @@ public class PlayerSystem extends IteratingSystem {
                 takeControlWhileWallJump = false;
             }
             body.setLinearVelocity(5 * side, 15);
+            wallJumpStartTime = TimeUtils.nanoTime();
         }
         if(GeneralUtils.secondsSince(wallJumpStartTime) > wallJumpLength) {
             takeControlWhileWallJump = false;

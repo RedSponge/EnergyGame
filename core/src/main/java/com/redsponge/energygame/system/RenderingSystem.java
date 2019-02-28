@@ -121,7 +121,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         animation.timeSinceStart += deltaTime;
         AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
 
-        batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+        batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - Constants.PLAYER_LOWER_PIXELS, frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
         batch.end();
 
         mapRenderer.renderForeground(viewport);

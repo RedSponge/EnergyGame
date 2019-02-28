@@ -48,6 +48,7 @@ public class ElectricEnergy implements Energy {
             circle.dispose();
         }
         protectionStartTime = TimeUtils.nanoTime();
+        Mappers.animation.get(player).timeSinceStart = 0;
     }
 
     @Override
@@ -72,6 +73,10 @@ public class ElectricEnergy implements Energy {
     @Override
     public int getMinEnergy() {
         return Constants.ELECTRIC_THRESHOLD;
+    }
+
+    public boolean isChargingField() {
+        return GeneralUtils.secondsSince(protectionStartTime) < Constants.ELECTRIC_START_LENGTH;
     }
 
     public boolean isFieldOn() {

@@ -44,27 +44,25 @@ public class HeatEnergy implements Energy {
         } else {
             return;
         }
-        if(regular != null) {
-            regularStartTime = TimeUtils.nanoTime();
-            //TODO: Decrease Energy For Renewing
-            return;
+        if(regular == null) {
+            FixtureDef fdef = new FixtureDef();
+            fdef.isSensor = true;
+
+            PolygonShape shape = new PolygonShape();
+
+            SizeComponent size = Mappers.size.get(player);
+            PhysicsComponent physics = Mappers.physics.get(player);
+
+            // TODO: Directions
+            shape.setAsBox(size.width / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
+            fdef.shape = shape;
+
+            regular = physics.body.createFixture(fdef);
+            regular.setUserData(Constants.ATTACK_DATA_ID);
         }
 
-        FixtureDef fdef = new FixtureDef();
-        fdef.isSensor = true;
-
-        PolygonShape shape = new PolygonShape();
-
-        SizeComponent size = Mappers.size.get(player);
-        PhysicsComponent physics = Mappers.physics.get(player);
-
-        // TODO: Directions
-        shape.setAsBox(size.width / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
-        fdef.shape = shape;
-
-        regular = physics.body.createFixture(fdef);
-        regular.setUserData(Constants.ATTACK_DATA_ID);
         regularStartTime = TimeUtils.nanoTime();
+        Mappers.animation.get(player).timeSinceStart = 0;
     }
 
     public void setOnGround(boolean onGround) {
@@ -90,7 +88,7 @@ public class HeatEnergy implements Energy {
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
 
-        if(isPunchOn()) {
+        if(!isPunchOn() && regular != null) {
             physics.body.destroyFixture(regular);
             Gdx.app.log("HeatEnergy", "Removed Regular Attack");
             regular = null;
@@ -98,7 +96,7 @@ public class HeatEnergy implements Energy {
     }
 
     public boolean isPunchOn() {
-        return GeneralUtils.secondsSince(regularStartTime) > 0.2f && regular != null;
+        return GeneralUtils.secondsSince(regularStartTime) < Constants.HEAT_ATTACK_LENGTH && regular != null;
     }
 
     public boolean isJumpOn() {

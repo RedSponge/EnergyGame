@@ -52,7 +52,16 @@ public class Constants {
     public static final int ELECTRIC_THRESHOLD = (int) MAX_ENERGY / 10 * 9;
 
     public static final Color NONE_COLOR = new Color(0x474747FF);
-    public static final Color HEAT_COLOR = new Color(0xc18255FF);
-    public static final Color LIGHT_COLOR = new Color(0xede07dFF);
-    public static final Color ENERGY_COLOR = new Color(0x474747FF);
+    public static final Color HEAT_COLOR = new Color(0xede07dFF);
+    public static final Color LIGHT_COLOR = new Color(0xff891cFF);
+    public static final Color ENERGY_COLOR = new Color(0xff1c1cFF);
+
+    public static final float PLAYER_LOWER_PIXELS = 2;
+
+    public static final float MENU_WIDTH = 480;
+    public static final float MENU_HEIGHT = 360;
+
+    public static final float HEAT_ATTACK_LENGTH = 0.5f;
+
+    public static final float ELECTRIC_START_LENGTH = 0.5f;
 }

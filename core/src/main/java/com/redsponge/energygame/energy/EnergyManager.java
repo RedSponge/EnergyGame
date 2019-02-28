@@ -46,6 +46,10 @@ public class EnergyManager {
         return this.electric.isFieldOn();
     }
 
+    public boolean isChargingElectricField() {
+        return this.electric.isChargingField();
+    }
+
     public HeatEnergy getHeat() {
         return heat;
     }

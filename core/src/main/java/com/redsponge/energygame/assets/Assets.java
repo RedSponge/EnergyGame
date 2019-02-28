@@ -29,10 +29,6 @@ public class Assets implements Disposable {
     }
 
     public void getResources() {
-        Gdx.app.log("Assets", "Loading!");
-
-        am.finishLoading();
-
         sounds.getResources(am);
         particles.getResources(am);
         textures.getResources(am);
@@ -70,7 +66,7 @@ public class Assets implements Disposable {
         am.finishLoading();
     }
 
-    public void update() {
-        am.update();
+    public boolean update() {
+        return am.update();
     }
 }

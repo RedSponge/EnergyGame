@@ -174,7 +174,6 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             shape = new PolygonShape();
             ((PolygonShape) shape).setAsBox((size.width / 2 - pixelsPerMeter * 0.01f) / pixelsPerMeter, (size.height / 2 - pixelsPerMeter * 0.01f) / pixelsPerMeter);
         } else if(chain != null){
-            Gdx.app.log("PhysicsSystem", "CHAIN!");
             shape = new ChainShape();
             ((ChainShape)shape).createLoop(GeneralUtils.divideAll(chain.vertices, pixelsPerMeter));
         } else {

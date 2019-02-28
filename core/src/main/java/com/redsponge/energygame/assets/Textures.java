@@ -2,18 +2,20 @@ package com.redsponge.energygame.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.redsponge.energygame.util.Constants;
 
 public class Textures implements AssetLoader {
 
     public Animation<AtlasRegion> lowRun;
     public Animation<AtlasRegion> medRun;
     public Animation<AtlasRegion> highRun;
+    public Animation<AtlasRegion> noneRun;
 
     public AtlasRegion lowIdle;
     public AtlasRegion medIdle;
@@ -27,11 +29,20 @@ public class Textures implements AssetLoader {
     public Animation<AtlasRegion> medDash;
     public Animation<AtlasRegion> highDash;
 
+    public Texture sky;
+
+    public Animation<AtlasRegion> lowAttack;
+    public Animation<AtlasRegion> medAttack;
+    public Animation<AtlasRegion> highAttack;
+
+    public Animation<AtlasRegion> highElectricStart;
+
 
     @Override
     public void load(AssetManager am) {
         Gdx.app.log("Textures", "Loading Textures!");
         am.load("textures/player/game_textures.atlas", TextureAtlas.class);
+        am.load("textures/sky.png", Texture.class);
     }
 
     @Override
@@ -42,6 +53,7 @@ public class Textures implements AssetLoader {
         lowRun = load(textures, 12, "low/run");
         medRun = load(textures, 12, "med/run");
         highRun = load(textures, 12, "high/run");
+        noneRun = load(textures, 7, "none/run");
 
         lowIdle = textures.findRegion("low/idle");
         medIdle = textures.findRegion("med/idle");
@@ -54,14 +66,27 @@ public class Textures implements AssetLoader {
         lowDash = load(textures, 4, "low/dash");
         medDash = load(textures, 4, "med/dash");
         highDash = load(textures, 4, "high/dash");
+
+        lowAttack = load(textures, 7, "low/hot_punch", Constants.HEAT_ATTACK_LENGTH / 7);
+        medAttack = load(textures, 7, "med/hot_punch", Constants.HEAT_ATTACK_LENGTH / 7);
+        highAttack = load(textures, 7, "high/hot_punch", Constants.HEAT_ATTACK_LENGTH / 7);
+
+        highElectricStart = load(textures, 7, "high/electric_activate", Constants.ELECTRIC_START_LENGTH / 7);
+
+        sky = am.get("textures/sky.png");
+
     }
 
     public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name) {
+        return load(atlas, numFrames, name, 0.75f/12f);
+    }
+
+    public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name, float frameDur) {
         Array<AtlasRegion> frames = new Array<AtlasRegion>();
         for(int i = 1; i <= numFrames; i++) {
             frames.add(atlas.findRegion(name, i));
         }
-        return new Animation<AtlasRegion>(0.75f/12f, frames, PlayMode.LOOP);
+        return new Animation<AtlasRegion>(frameDur, frames, PlayMode.LOOP);
     }
 
 

@@ -75,7 +75,7 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
         engine.addEntity(player);
@@ -87,7 +87,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void tick(float delta) {
-//        addEnergy(3);
+        addEnergy(3);
     }
 
     @Override
@@ -98,13 +98,11 @@ public class GameScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         background.apply();
-        shapeRenderer.setProjectionMatrix(background.getCamera().combined);
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.GRAY);
-        shapeRenderer.rect(0, 0, background.getWorldWidth(), background.getWorldHeight());
-        shapeRenderer.end();
 
-
+        batch.setProjectionMatrix(background.getCamera().combined);
+        batch.begin();
+        batch.draw(assets.getTextures().sky, 0, 0, background.getWorldWidth(), background.getWorldHeight());
+        batch.end();
 
         engine.update(delta);
         PositionComponent pos = Mappers.position.get(player);
