@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -13,15 +14,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.redsponge.energygame.components.PhysicsComponent;
-import com.redsponge.energygame.components.PositionComponent;
-import com.redsponge.energygame.maps.MapManager;
-import com.redsponge.energygame.utils.Constants;
-import com.redsponge.energygame.systems.PhysicsDebugSystem;
-import com.redsponge.energygame.systems.PhysicsSystem;
-import com.redsponge.energygame.systems.PlayerSystem;
-import com.redsponge.energygame.systems.RenderingSystem;
-import com.redsponge.energygame.utils.EntityFactory;
+import com.redsponge.energygame.component.Mappers;
+import com.redsponge.energygame.component.PhysicsComponent;
+import com.redsponge.energygame.component.PositionComponent;
+import com.redsponge.energygame.map.MapFetcher;
+import com.redsponge.energygame.map.MapManager;
+import com.redsponge.energygame.util.Constants;
+import com.redsponge.energygame.system.PhysicsDebugSystem;
+import com.redsponge.energygame.system.PhysicsSystem;
+import com.redsponge.energygame.system.PlayerSystem;
+import com.redsponge.energygame.system.RenderingSystem;
+import com.redsponge.energygame.util.EntityFactory;
 
 public class GameScreen extends AbstractScreen {
 
@@ -37,6 +40,8 @@ public class GameScreen extends AbstractScreen {
     private Entity player;
     private Color barColor;
     private float displayedEnergy;
+
+    private PooledEffect currentParticle;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -57,7 +62,7 @@ public class GameScreen extends AbstractScreen {
 
         PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null);
 
-        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/level1.tmx"), engine);
+        mapManager = new MapManager(ps, new TmxMapLoader().load(MapFetcher.getEasyMap()), engine);
 
         ps.setMapManager(mapManager);
         player = EntityFactory.getPlayer(assets);
@@ -71,12 +76,13 @@ public class GameScreen extends AbstractScreen {
 
         engine.addSystem(new PlayerSystem(this, assets));
         engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
-        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets));
+        engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, gameScreen));
 
         engine.addEntity(player);
         barColor = new Color(0, 0, 0, 1);
 
         displayedEnergy = 0;
+        currentParticle = assets.getParticles().sparkle.spawn(new Vector2(0, 0));
     }
 
     @Override
@@ -98,8 +104,16 @@ public class GameScreen extends AbstractScreen {
         shapeRenderer.rect(0, 0, background.getWorldWidth(), background.getWorldHeight());
         shapeRenderer.end();
 
-        engine.update(delta);
 
+
+        engine.update(delta);
+        PositionComponent pos = Mappers.position.get(player);
+
+        viewport.apply();
+        batch.setProjectionMatrix(viewport.getCamera().combined);
+        batch.begin();
+        batch.end();
+        assets.getParticles().cleanUp();
         renderHUD();
     }
 

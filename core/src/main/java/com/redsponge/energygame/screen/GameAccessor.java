@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.redsponge.energygame.EnergyGame;
 import com.redsponge.energygame.assets.Assets;
-import com.redsponge.energygame.transitions.Transition;
-import com.redsponge.energygame.transitions.TransitionScreen;
+import com.redsponge.energygame.transition.Transition;
+import com.redsponge.energygame.transition.TransitionScreen;
 
 public class GameAccessor {
 

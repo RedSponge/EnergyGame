@@ -21,6 +21,7 @@ public class EnergyGame extends Game {
         this.assets = new Assets();
 
         this.ga = new GameAccessor(this);
+
         setScreen(new GameScreen(ga));
     }
 

@@ -1,6 +1,6 @@
 package com.redsponge.energygame.input;
 
-import com.redsponge.energygame.systems.PlayerSystem;
+import com.redsponge.energygame.system.PlayerSystem;
 
 /**
  * A class which defines what an input system should include. the {@link PlayerSystem} uses an instance of a class which

@@ -7,12 +7,12 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.redsponge.energygame.components.Mappers;
-import com.redsponge.energygame.components.PhysicsComponent;
-import com.redsponge.energygame.components.SizeComponent;
+import com.redsponge.energygame.component.Mappers;
+import com.redsponge.energygame.component.PhysicsComponent;
+import com.redsponge.energygame.component.SizeComponent;
 import com.redsponge.energygame.screen.GameScreen;
-import com.redsponge.energygame.utils.Constants;
-import com.redsponge.energygame.utils.GeneralUtils;
+import com.redsponge.energygame.util.Constants;
+import com.redsponge.energygame.util.GeneralUtils;
 
 public class HeatEnergy implements Energy {
 

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.redsponge.energygame.splashscreen.SplashScreenRenderer;
-import com.redsponge.energygame.transitions.TransitionFade;
+import com.redsponge.energygame.transition.TransitionFade;
 
 public class SplashScreenScreen extends AbstractScreen {
     private SplashScreenRenderer splashScreenRenderer;

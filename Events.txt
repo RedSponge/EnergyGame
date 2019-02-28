@@ -1,0 +1,18 @@
+To add an event type, add a `type` to a rectangle in the `Events` layer
+----------------------------------------------------------------------
+- loadnext:
+Loads the next map and disposes (removes) the last
+
+- zoom:
+Changes the camera's zoom.
+    Params:
+    - data: The wanted zoom
+
+- camera:
+Changes the camera's position
+    Params:
+    - x: the x position. either a number or a type (explained later)
+    - y: the y position. either a number or a type (explained later)
+        Types:
+        auto: auto-move on x, fixed height on y
+        player: snap to player

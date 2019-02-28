@@ -31,29 +31,29 @@ public class Textures implements AssetLoader {
     @Override
     public void load(AssetManager am) {
         Gdx.app.log("Textures", "Loading Textures!");
-        am.load("textures/game_textures.atlas", TextureAtlas.class);
+        am.load("textures/player/game_textures.atlas", TextureAtlas.class);
     }
 
     @Override
     public void getResources(AssetManager am) {
         Gdx.app.log("Textures", "Retrieving Textures");
-        TextureAtlas textures = am.get("textures/game_textures.atlas");
+        TextureAtlas textures = am.get("textures/player/game_textures.atlas");
 
-        lowRun = load(textures, 12, "player/low/run");
-        medRun = load(textures, 12, "player/med/run");
-        highRun = load(textures, 12, "player/high/run");
+        lowRun = load(textures, 12, "low/run");
+        medRun = load(textures, 12, "med/run");
+        highRun = load(textures, 12, "high/run");
 
-        lowIdle = textures.findRegion("player/low/idle");
-        medIdle = textures.findRegion("player/med/idle");
-        highIdle = textures.findRegion("player/high/idle");
+        lowIdle = textures.findRegion("low/idle");
+        medIdle = textures.findRegion("med/idle");
+        highIdle = textures.findRegion("high/idle");
 
-        lowDashPrep = textures.findRegion("player/low/dash_prep");
-        medDashPrep = textures.findRegion("player/med/dash_prep");
-        highDashPrep = textures.findRegion("player/high/dash_prep");
+        lowDashPrep = textures.findRegion("low/dash_prep");
+        medDashPrep = textures.findRegion("med/dash_prep");
+        highDashPrep = textures.findRegion("high/dash_prep");
 
-        lowDash = load(textures, 4, "player/low/dash");
-        medDash = load(textures, 4, "player/med/dash");
-        highDash = load(textures, 4, "player/high/dash");
+        lowDash = load(textures, 4, "low/dash");
+        medDash = load(textures, 4, "med/dash");
+        highDash = load(textures, 4, "high/dash");
     }
 
     public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name) {

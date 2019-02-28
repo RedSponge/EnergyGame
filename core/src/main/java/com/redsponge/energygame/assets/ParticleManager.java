@@ -30,10 +30,6 @@ public class ParticleManager {
         for(PooledEffect p : spawned) {
             p.update(delta);
             p.draw(batch);
-            if(p.isComplete()) {
-                p.free();
-                spawned.removeValue(p, true);
-            }
         }
     }
 
@@ -51,5 +47,14 @@ public class ParticleManager {
         spawned.add(p);
 
         return p;
+    }
+
+    public void cleanUp() {
+        for(PooledEffect p : spawned) {
+            if(p.isComplete()) {
+                p.free();
+                spawned.removeValue(p, true);
+            }
+        }
     }
 }
