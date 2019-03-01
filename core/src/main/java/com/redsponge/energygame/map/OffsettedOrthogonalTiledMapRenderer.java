@@ -60,7 +60,7 @@ public class OffsettedOrthogonalTiledMapRenderer extends OrthogonalTiledMapRende
 
         final float layerOffsetX = layer.getRenderOffsetX() * unitScale + offsetX;
         // offset in tiled is y down, so we flip it
-        final float layerOffsetY = -layer.getRenderOffsetY() * unitScale;
+        final float layerOffsetY = -layer.getRenderOffsetY() * unitScale + offsetY;
 
         final int col1 = Math.max(0, (int) ((viewBounds.x - layerOffsetX) / layerTileWidth));
         final int col2 = Math.min(layerWidth,

@@ -47,7 +47,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     private boolean electricNeedsRestart;
 
     public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, MapManager mapManager, Assets assets, GameScreen gameScreen) {
-        super(Family.all(PositionComponent.class, SizeComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
+        super(Family.all(PositionComponent.class, SizeComponent.class, AnimationComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
         this.shapeRenderer = shapeRenderer;
         this.batch = batch;
         this.player = player;
@@ -57,10 +57,10 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.gameScreen = gameScreen;
         this.mapRenderer = new MapManagerRenderer(mapManager, batch);
         this.xMode = this.yMode = CameraMode.AUTO;
-        this.sparkParticle = assets.getParticles().sparkle.spawn(new Vector2(), 0);
+//        this.sparkParticle = assets.getParticles().sparkle.spawn(new Vector2(), 0);
         this.sparkNeedsRestart = true;
 
-        this.electricParticle = assets.getParticles().electric.spawn(new Vector2(), 0);
+//        this.electricParticle = assets.getParticles().electric.spawn(new Vector2(), 0);
         this.electricNeedsRestart = true;
     }
 
@@ -83,13 +83,15 @@ public class RenderingSystem extends SortedIteratingSystem {
         DirectionComponent direction = Mappers.direction.get(player);
         PlayerComponent pc = Mappers.player.get(player);
 
-        sparkParticle.setPosition(pos.x, pos.y);
-        electricParticle.setPosition(pos.x, pos.y);
+        if(!sparkNeedsRestart)
+            sparkParticle.setPosition(pos.x, pos.y);
+        if(!electricNeedsRestart)
+            electricParticle.setPosition(pos.x, pos.y);
         assets.getParticles().render(deltaTime, batch);
 
         float energy = gameScreen.getEnergy();
 
-        if(sparkParticle.isComplete() || sparkNeedsRestart) {
+        if(sparkParticle != null && sparkParticle.isComplete() || sparkNeedsRestart) {
             if(energy > Constants.HEAT_THRESHOLD) {
                 if (sparkNeedsRestart) {
                     sparkNeedsRestart = false;
@@ -102,7 +104,7 @@ public class RenderingSystem extends SortedIteratingSystem {
             }
         }
 
-        if(electricParticle.isComplete() || electricNeedsRestart) {
+        if(electricParticle != null && electricParticle.isComplete() || electricNeedsRestart) {
             if(energy > Constants.ELECTRIC_THRESHOLD) {
                 if (electricNeedsRestart) {
                     electricNeedsRestart = false;
@@ -122,6 +124,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
 
         batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - Constants.PLAYER_LOWER_PIXELS, frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+        super.update(deltaTime);
         batch.end();
 
         mapRenderer.renderForeground(viewport);
@@ -155,8 +158,8 @@ public class RenderingSystem extends SortedIteratingSystem {
             viewport.getCamera().position.y = (1-.1f) * viewport.getCamera().position.y + 0.1f * fixedCamY;
         }
 
-        if(pos.x > viewport.getCamera().position.x + viewport.getWorldWidth() / 4) {
-            viewport.getCamera().position.x = pos.x - viewport.getWorldWidth() / 4;
+        if(pos.x > viewport.getCamera().position.x) {
+            viewport.getCamera().position.x = pos.x;
         }
 
         viewport.apply();
@@ -165,12 +168,13 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        if(entity == player) return;
         PositionComponent pos = Mappers.position.get(entity);
         SizeComponent size = Mappers.size.get(entity);
-        CircleBottomComponent circle = Mappers.circle.get(entity);
+        AnimationComponent anim = Mappers.animation.get(entity);
 
-        shapeRenderer.setColor(Color.GRAY);
-        shapeRenderer.rect(pos.x - size.width / 2, pos.y - size.height / 2 - (circle != null ? circle.radius : 0), size.width, size.height + (circle == null ? 0 : circle.radius));
+        anim.timeSinceStart += deltaTime;
+        batch.draw(anim.animation.getKeyFrame(anim.timeSinceStart), pos.x, pos.y);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.component.DirectionComponent;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
 import com.redsponge.energygame.component.SizeComponent;
@@ -39,28 +40,11 @@ public class HeatEnergy implements Energy {
 
     @Override
     public void regularInitiated(GameScreen gameScreen) {
-        if(gameScreen.getEnergy() > Constants.HEAT_THRESHOLD) {
+        if(gameScreen.getEnergy() > Constants.HEAT_THRESHOLD && GeneralUtils.secondsSince(regularStartTime) > Constants.ATTACK_COOLDOWN) {
             gameScreen.addEnergy(-5);
         } else {
             return;
         }
-        if(regular == null) {
-            FixtureDef fdef = new FixtureDef();
-            fdef.isSensor = true;
-
-            PolygonShape shape = new PolygonShape();
-
-            SizeComponent size = Mappers.size.get(player);
-            PhysicsComponent physics = Mappers.physics.get(player);
-
-            // TODO: Directions
-            shape.setAsBox(size.width / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
-            fdef.shape = shape;
-
-            regular = physics.body.createFixture(fdef);
-            regular.setUserData(Constants.ATTACK_DATA_ID);
-        }
-
         regularStartTime = TimeUtils.nanoTime();
         Mappers.animation.get(player).timeSinceStart = 0;
     }
@@ -88,6 +72,23 @@ public class HeatEnergy implements Energy {
     public void update(float delta) {
         PhysicsComponent physics = Mappers.physics.get(player);
 
+        float timeSince = GeneralUtils.secondsSince(regularStartTime);
+        if(regular == null && timeSince > Constants.HEAT_ATTACK_CHARGE && timeSince < Constants.HEAT_ATTACK_LENGTH) {
+            FixtureDef fdef = new FixtureDef();
+            fdef.isSensor = true;
+
+            PolygonShape shape = new PolygonShape();
+
+            SizeComponent size = Mappers.size.get(player);
+            DirectionComponent dir = Mappers.direction.get(player);
+
+            // TODO: Directions
+            shape.setAsBox(Constants.ATTACK_WIDTH / 2 / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(Constants.ATTACK_WIDTH / 2 / pixelsPerMeter * dir.direction.mult, 0), 0);
+            fdef.shape = shape;
+
+            regular = physics.body.createFixture(fdef);
+            regular.setUserData(Constants.ATTACK_DATA_ID);
+        }
         if(!isPunchOn() && regular != null) {
             physics.body.destroyFixture(regular);
             Gdx.app.log("HeatEnergy", "Removed Regular Attack");
@@ -96,7 +97,8 @@ public class HeatEnergy implements Energy {
     }
 
     public boolean isPunchOn() {
-        return GeneralUtils.secondsSince(regularStartTime) < Constants.HEAT_ATTACK_LENGTH && regular != null;
+        float timeSince = GeneralUtils.secondsSince(regularStartTime);
+        return timeSince < Constants.HEAT_ATTACK_LENGTH;
     }
 
     public boolean isJumpOn() {

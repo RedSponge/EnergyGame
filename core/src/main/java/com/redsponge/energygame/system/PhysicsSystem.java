@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Array.ArrayIterator;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.component.ChainComponent;
 import com.redsponge.energygame.component.CircleBottomComponent;
 import com.redsponge.energygame.component.ColliderComponent;
@@ -53,17 +54,19 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
      * <bold>Must be set BEFORE the system is added to the engine!</bold>
      */
     private MapManager mapManager;
+    private Assets assets;
 
-    public PhysicsSystem(Vector2 gravity, float pixelsPerMeter, MapManager mapManager) {
+    public PhysicsSystem(Vector2 gravity, float pixelsPerMeter, MapManager mapManager, Assets assets) {
         super(Family.all(PositionComponent.class, SizeComponent.class, VelocityComponent.class, PhysicsComponent.class).get(), Constants.PHYSICS_PRIORITY);
         this.gravity = gravity;
         this.pixelsPerMeter = pixelsPerMeter;
         this.mapManager = mapManager;
+        this.assets = assets;
         this.world = new World(this.gravity, true);
     }
 
-    public PhysicsSystem(MapManager mapManager) {
-        this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM, mapManager);
+    public PhysicsSystem(MapManager mapManager, Assets assets) {
+        this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM, mapManager, assets);
     }
 
     public void setMapManager(MapManager mapManager) {
@@ -80,6 +83,11 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     protected void processEntity(Entity entity, float deltaTime) {
         PositionComponent pos = Mappers.position.get(entity);
         PhysicsComponent physics = Mappers.physics.get(entity);
+        EnemyComponent enemy = Mappers.enemy.get(entity);
+
+        if(enemy != null) {
+            physics.body.setLinearVelocity(physics.body.getLinearVelocity().scl(0.9f));
+        }
 
         pos.x = physics.body.getPosition().x * pixelsPerMeter;
         pos.y = physics.body.getPosition().y * pixelsPerMeter;
@@ -121,7 +129,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         MapLayer layer = map.getLayers().get("Enemies");
         for(RectangleMapObject enemy : new ArrayIterator<RectangleMapObject>(layer.getObjects().getByType(RectangleMapObject.class))) {
             Rectangle rect = enemy.getRectangle();
-            Entity e = EntityFactory.getEnemy(rect.x + offset, rect.y, 30, 30);
+            Entity e = EntityFactory.getEnemy(assets, rect.x + offset, rect.y, 16, 16);
             entities.add(e);
             this.getEngine().addEntity(e);
         }
@@ -182,17 +190,9 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         }
         collider.shape = shape;
         collider.friction = 0;
-        collider.isSensor = enemy != null || event != null;
+        collider.isSensor = event != null;
 
         body.createFixture(collider).setUserData(enemy == null ? event != null ? Constants.EVENT_DATA_ID : platform != null ? Constants.PLATFORM_DATA_ID : Constants.BODY_DATA_ID : Constants.ENEMY_DATA_ID);
-        if(enemy != null) {
-            FixtureDef fdef = new FixtureDef();
-            PolygonShape s = new PolygonShape();
-            s.setAsBox(1 / pixelsPerMeter, 1 / pixelsPerMeter, new Vector2(0, -size.height / 2 / pixelsPerMeter + 1/pixelsPerMeter), 0);
-            fdef.shape = s;
-            body.createFixture(fdef).setUserData(Constants.BODY_DATA_ID);
-            s.dispose();
-        }
         shape.dispose();
 
         // Circle Creation

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.redsponge.energygame.component.ColliderComponent;
+import com.redsponge.energygame.component.EnemyComponent;
 import com.redsponge.energygame.component.EventComponent;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PlayerComponent;
@@ -99,12 +100,13 @@ public class CollisionManager implements ContactListener {
         Entity e = (Entity) enemy.getBody().getUserData();
         Entity o = (Entity) other.getBody().getUserData();
         PlayerComponent player = Mappers.player.get(o);
+        EnemyComponent ec = Mappers.enemy.get(e);
         if(other.getUserData().equals(Constants.ATTACK_DATA_ID)) {
-            engine.removeEntity(e);
+            ec.health = 0;
         }
         else if(player != null) {
             if(player.energy.isSuperDashOn()) {
-                engine.removeEntity(e);
+                ec.health = 0;
             } else {
                 player.dead = true;
             }

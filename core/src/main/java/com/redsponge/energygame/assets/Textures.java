@@ -17,6 +17,8 @@ public class Textures implements AssetLoader {
     public Animation<AtlasRegion> highRun;
     public Animation<AtlasRegion> noneRun;
 
+    public Animation<AtlasRegion> enemyIdle;
+
     public AtlasRegion lowIdle;
     public AtlasRegion medIdle;
     public AtlasRegion highIdle;
@@ -30,10 +32,16 @@ public class Textures implements AssetLoader {
     public Animation<AtlasRegion> highDash;
 
     public Texture sky;
+    public Texture title;
 
     public Animation<AtlasRegion> lowAttack;
     public Animation<AtlasRegion> medAttack;
     public Animation<AtlasRegion> highAttack;
+
+    public Animation<AtlasRegion> noneWallJump;
+    public Animation<AtlasRegion> lowWallJump;
+    public Animation<AtlasRegion> medWallJump;
+    public Animation<AtlasRegion> highWallJump;
 
     public Animation<AtlasRegion> highElectricStart;
 
@@ -42,7 +50,9 @@ public class Textures implements AssetLoader {
     public void load(AssetManager am) {
         Gdx.app.log("Textures", "Loading Textures!");
         am.load("textures/player/game_textures.atlas", TextureAtlas.class);
+        am.load("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
         am.load("textures/sky.png", Texture.class);
+        am.load("textures/title.png", Texture.class);
     }
 
     @Override
@@ -73,7 +83,20 @@ public class Textures implements AssetLoader {
 
         highElectricStart = load(textures, 7, "high/electric_activate", Constants.ELECTRIC_START_LENGTH / 7);
 
+        noneWallJump = new Animation<AtlasRegion>(0.1f, textures.findRegion("none/walljump"));
+        noneWallJump.setPlayMode(PlayMode.LOOP);
+        lowWallJump = new Animation<AtlasRegion>(0.1f, textures.findRegion("low/walljump"));
+        lowWallJump.setPlayMode(PlayMode.LOOP);
+        medWallJump = new Animation<AtlasRegion>(0.1f, textures.findRegion("med/walljump"));
+        medWallJump.setPlayMode(PlayMode.LOOP);
+        highWallJump = new Animation<AtlasRegion>(0.1f, textures.findRegion("high/walljump"));
+        highWallJump.setPlayMode(PlayMode.LOOP);
+
+        TextureAtlas enemyTextures = am.get("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
+        enemyIdle = load(enemyTextures, 2, "idle", 0.5f);
+
         sky = am.get("textures/sky.png");
+        title = am.get("textures/title.png");
 
     }
 

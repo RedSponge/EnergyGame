@@ -31,7 +31,7 @@ public class ElectricEnergy implements Energy {
     @Override
     public void regularInitiated(GameScreen gameScreen) {
         Gdx.app.log("ElectricEnergy", "Regular");
-        if(gameScreen.getEnergy() > Constants.ELECTRIC_THRESHOLD) {
+        if(gameScreen.getEnergy() > Constants.ELECTRIC_THRESHOLD && GeneralUtils.secondsSince(protectionStartTime) > Constants.ELECTRICITY_DELAY + protectionLength) {
             gameScreen.addEnergy(-50);
         } else {
             return;

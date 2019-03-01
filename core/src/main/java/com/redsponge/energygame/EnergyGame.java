@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.screen.GameAccessor;
 import com.redsponge.energygame.screen.GameScreen;
-import com.redsponge.energygame.screen.SplashScreenScreen;
 
 public class EnergyGame extends Game {
 

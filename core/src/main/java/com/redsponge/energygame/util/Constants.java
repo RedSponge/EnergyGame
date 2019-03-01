@@ -14,11 +14,12 @@ public class Constants {
 
     public static final int PLAYER_PRIORITY = 1;
     public static final int PHYSICS_PRIORITY = 2;
+    public static final int ENEMY_PRIORITY = 3;
     public static final int RENDERING_PRIORITY = 4;
 
     public static final float DETECTOR_WIDTH = 3;
     public static final float DETECTOR_HEIGHT = 10;
-    
+
     public static final int PHYSICS_POSITION_ITERATIONS = 3;
     public static final int PHYSICS_VELOCITY_ITERATIONS = 3;
 
@@ -58,10 +59,17 @@ public class Constants {
 
     public static final float PLAYER_LOWER_PIXELS = 2;
 
-    public static final float MENU_WIDTH = 480;
+    public static final float MENU_WIDTH = 640;
     public static final float MENU_HEIGHT = 360;
 
-    public static final float HEAT_ATTACK_LENGTH = 0.5f;
 
     public static final float ELECTRIC_START_LENGTH = 0.5f;
+    public static final float ATTACK_COOLDOWN = 0.5f;
+
+    public static final float DASH_COOLDOWN = 0.5f;
+    public static final float ELECTRICITY_DELAY = 0.5f;
+    public static final float ATTACK_WIDTH = 30;
+
+    public static final float HEAT_ATTACK_LENGTH = 0.5f;
+    public static final float HEAT_ATTACK_CHARGE = HEAT_ATTACK_LENGTH / 7 * 3;
 }

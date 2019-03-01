@@ -3,10 +3,15 @@ package com.redsponge.energygame.energy;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.redsponge.energygame.component.DirectionComponent.Direction;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
+import com.redsponge.energygame.component.PositionComponent;
+import com.redsponge.energygame.component.SizeComponent;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.screen.GameScreen;
 import com.redsponge.energygame.util.GeneralUtils;
@@ -16,8 +21,11 @@ public class LightEnergy implements Energy {
     private long superDashStartTime;
     private Entity player;
     private Direction dashDir;
+    private Fixture attacker;
+    private float pixelsPerMeter;
 
-    public LightEnergy() {
+    public LightEnergy(float pixelsPerMeter) {
+        this.pixelsPerMeter = pixelsPerMeter;
         superDashStartTime = 0;
     }
 
@@ -28,10 +36,25 @@ public class LightEnergy implements Energy {
     @Override
     public void regularInitiated(GameScreen gameScreen) {
         Gdx.app.log("LightEnergy", "Regular");
-        if(gameScreen.getEnergy() > Constants.LIGHT_THRESHOLD) {
+        if(gameScreen.getEnergy() > Constants.LIGHT_THRESHOLD && GeneralUtils.secondsSince(superDashStartTime) > Constants.DASH_COOLDOWN) {
             gameScreen.addEnergy(-20);
             superDashStartTime = TimeUtils.nanoTime();
             dashDir = Mappers.direction.get(player).direction;
+
+            PositionComponent pos = Mappers.position.get(player);
+            SizeComponent size = Mappers.size.get(player);
+            PhysicsComponent phy = Mappers.physics.get(player);
+
+            FixtureDef def = new FixtureDef();
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(1 / pixelsPerMeter, size.height / 2 / pixelsPerMeter, new Vector2(size.width / 2 / pixelsPerMeter, 0), 0);
+            def.shape = shape;
+            def.isSensor = true;
+
+            attacker = phy.body.createFixture(def);
+            attacker.setUserData(Constants.ATTACK_DATA_ID);
+            shape.dispose();
+
         }
     }
 
@@ -50,6 +73,9 @@ public class LightEnergy implements Energy {
         PhysicsComponent physics = Mappers.physics.get(player);
         if(isDashOn()) {
             physics.body.applyLinearImpulse(new Vector2(2 * dashDir.mult, 0), physics.body.getLocalCenter(), true);
+        } else if(attacker != null) {
+            physics.body.destroyFixture(attacker);
+            attacker = null;
         }
     }
 

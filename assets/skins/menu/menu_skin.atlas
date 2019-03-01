@@ -1,0 +1,65 @@
+
+menu_skin.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+button_hold
+  rotate: false
+  xy: 771, 769
+  size: 32, 32
+  split: 7, 7, 7, 7
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button_hover
+  rotate: false
+  xy: 1, 308
+  size: 32, 32
+  split: 7, 7, 7, 7
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+button_reg
+  rotate: false
+  xy: 508, 502
+  size: 32, 32
+  split: 7, 7, 7, 7
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+font-export
+  rotate: false
+  xy: 1, 342
+  size: 142, 143
+  orig: 142, 143
+  offset: 0, 0
+  index: -1
+font-title-export
+  rotate: false
+  xy: 508, 536
+  size: 261, 265
+  orig: 261, 265
+  offset: 0, 0
+  index: -1
+pixelmix
+  rotate: false
+  xy: 1, 564
+  size: 505, 237
+  orig: 505, 237
+  offset: 0, 0
+  index: -1
+pixelmix16
+  rotate: false
+  xy: 1, 487
+  size: 505, 75
+  orig: 505, 75
+  offset: 0, 0
+  index: -1
+pixelmix16_spaced
+  rotate: false
+  xy: 1, 487
+  size: 505, 75
+  orig: 505, 75
+  offset: 0, 0
+  index: -1

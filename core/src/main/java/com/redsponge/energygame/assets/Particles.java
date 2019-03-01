@@ -9,10 +9,12 @@ public class Particles implements AssetLoader {
 
     public ParticleManager sparkle;
     public ParticleManager electric;
+    public ParticleManager popcorn;
 
     public Particles() {
         sparkle = new ParticleManager("sparkle.p");
         electric = new ParticleManager("electric.p");
+        popcorn = new ParticleManager("popcorn_explode.p");
     }
 
     @Override
@@ -27,15 +29,18 @@ public class Particles implements AssetLoader {
         TextureAtlas atlas = am.get("particles/textures.atlas", TextureAtlas.class);
         sparkle.getResources(atlas);
         electric.getResources(atlas);
+        popcorn.getResources(atlas);
     }
 
     public void render(float delta, SpriteBatch batch) {
         sparkle.render(delta, batch);
         electric.render(delta, batch);
+        popcorn.render(delta, batch);
     }
 
     public void cleanUp() {
         sparkle.cleanUp();
         electric.cleanUp();
+        popcorn.cleanUp();
     }
 }

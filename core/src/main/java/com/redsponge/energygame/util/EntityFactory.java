@@ -31,12 +31,14 @@ public class EntityFactory {
 
         return player;
     }
-    public static Entity getEnemy(float x, float y, float width, float height) {
+    public static Entity getEnemy(Assets assets, float x, float y, float width, float height) {
         Entity enemy = new Entity();
         enemy.add(new PositionComponent(x, y));
         enemy.add(new SizeComponent(width, height));
         enemy.add(new PhysicsComponent(BodyType.DynamicBody));
         enemy.add(new EnemyComponent());
+        enemy.add(new VelocityComponent());
+        enemy.add(new AnimationComponent(assets.getTextures().enemyIdle));
 
         return enemy;
     }

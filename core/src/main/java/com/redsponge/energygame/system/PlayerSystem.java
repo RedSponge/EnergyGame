@@ -111,13 +111,19 @@ public class PlayerSystem extends IteratingSystem {
         AnimationComponent animation = Mappers.animation.get(entity);
         boolean idle = body.getLinearVelocity().x == 0;
 
-        if(gameScreen.getEnergy() < Constants.HEAT_THRESHOLD) {
-            animation.animation = assets.getTextures().noneRun;
+        if(gameScreen.getEnergy() < Constants.HEAT_THRESHOLD && !playerC.energy.isHeatPunchOn()) {
+            if(!onGround && (holdingWall || GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength)){
+                animation.animation = assets.getTextures().noneWallJump;
+            } else {
+                animation.animation = assets.getTextures().noneRun;
+            }
         } else if(gameScreen.getEnergy() < Constants.LIGHT_THRESHOLD) {
             if(playerC.energy.isHeatPunchOn()) {
                 animation.animation = assets.getTextures().lowAttack;
             } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().lowDash;
+            } else if(!onGround && (holdingWall || GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength)){
+                animation.animation = assets.getTextures().lowWallJump;
             } else {
                 animation.animation = assets.getTextures().lowRun;
             }
@@ -126,6 +132,8 @@ public class PlayerSystem extends IteratingSystem {
                 animation.animation = assets.getTextures().medAttack;
             } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().medDash;
+            } else if(!onGround && (holdingWall || GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength)){
+                animation.animation = assets.getTextures().medWallJump;
             } else {
                 animation.animation = assets.getTextures().medRun;
             }
@@ -134,6 +142,8 @@ public class PlayerSystem extends IteratingSystem {
                 animation.animation = assets.getTextures().highAttack;
             } else if(playerC.energy.isSuperDashOn()) {
                 animation.animation = assets.getTextures().highDash;
+            } else if(!onGround && (holdingWall || GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength)){
+                animation.animation = assets.getTextures().highWallJump;
             } else {
                 animation.animation = assets.getTextures().highRun;
             }
@@ -272,13 +282,11 @@ public class PlayerSystem extends IteratingSystem {
      * @param body - The player's {@link Body}
      */
     private void updateFallVelocity(Body body) {
-        if(GeneralUtils.secondsSince(wallJumpStartTime) < wallJumpLength) {
-            body.applyLinearImpulse(new Vector2(0, 0), body.getWorldCenter(), true);
-        } else if(!onGround && !jumping) {
+        if(!onGround && !jumping && GeneralUtils.secondsSince(wallJumpStartTime) > wallJumpLength) {
             body.applyLinearImpulse(new Vector2(0, fallAmplifier), body.getWorldCenter(), true);
         }
 
-        if(holdingWall && input.getHorizontal() != 0) {
+        if(holdingWall && input.getHorizontal() != 0 && !onGround) {
             if(body.getLinearVelocity().y < wallHoldVelocity) {
                 body.setLinearVelocity(body.getLinearVelocity().x, wallHoldVelocity);
             }

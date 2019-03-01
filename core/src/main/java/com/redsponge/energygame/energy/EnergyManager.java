@@ -10,7 +10,7 @@ public class EnergyManager {
 
     public EnergyManager(GameScreen gameScreen, float pixelsPerMeter) {
         this.heat = new HeatEnergy(pixelsPerMeter);
-        this.light = new LightEnergy();
+        this.light = new LightEnergy(pixelsPerMeter);
         this.electric = new ElectricEnergy();
     }
 

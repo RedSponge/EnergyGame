@@ -19,6 +19,7 @@ import com.redsponge.energygame.component.PhysicsComponent;
 import com.redsponge.energygame.component.PositionComponent;
 import com.redsponge.energygame.map.MapFetcher;
 import com.redsponge.energygame.map.MapManager;
+import com.redsponge.energygame.system.EnemyCleanupSystem;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.system.PhysicsDebugSystem;
 import com.redsponge.energygame.system.PhysicsSystem;
@@ -60,7 +61,7 @@ public class GameScreen extends AbstractScreen {
         engine = new Engine();
 
 
-        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null);
+        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null, assets);
 
         mapManager = new MapManager(ps, new TmxMapLoader().load(MapFetcher.getEasyMap()), engine);
 
@@ -75,7 +76,8 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+        engine.addSystem(new EnemyCleanupSystem(assets));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
         engine.addEntity(player);
@@ -87,7 +89,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void tick(float delta) {
-        addEnergy(3);
+//        addEnergy(3);
     }
 
     @Override

@@ -228,6 +228,13 @@ high/run
   orig: 32, 32
   offset: 0, 0
   index: 12
+high/walljump
+  rotate: false
+  xy: 406, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 
 game_textures2.png
 size: 512,128
@@ -409,6 +416,13 @@ low/run
   orig: 32, 32
   offset: 0, 0
   index: 12
+low/walljump
+  rotate: false
+  xy: 338, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 
 game_textures3.png
 size: 512,128
@@ -590,6 +604,13 @@ med/run
   orig: 32, 32
   offset: 0, 0
   index: 12
+med/walljump
+  rotate: false
+  xy: 338, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 
 game_textures4.png
 size: 256,64
@@ -645,3 +666,10 @@ none/run
   orig: 32, 32
   offset: 0, 0
   index: 6
+none/walljump
+  rotate: false
+  xy: 206, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
