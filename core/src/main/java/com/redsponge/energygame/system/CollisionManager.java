@@ -14,6 +14,7 @@ import com.redsponge.energygame.component.EventComponent;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PlayerComponent;
 import com.redsponge.energygame.map.MapManager;
+import com.redsponge.energygame.screen.GameScreen;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.util.Pair;
 
@@ -22,10 +23,12 @@ public class CollisionManager implements ContactListener {
     private Engine engine;
     private MapManager mapManager;
     private RenderingSystem rs;
+    private GameScreen gameScreen;
 
-    public CollisionManager(Engine engine, MapManager mapManager) {
+    public CollisionManager(Engine engine, MapManager mapManager, GameScreen gameScreen) {
         this.engine = engine;
         this.mapManager = mapManager;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -75,6 +78,13 @@ public class CollisionManager implements ContactListener {
             } else if(eventC.event.equals("camera")) {
                 Gdx.app.log("Event", "Camera Event Called!");
                 this.engine.getSystem(RenderingSystem.class).setCameraModes(eventC.props.get("x", String.class), eventC.props.get("y", String.class));
+            } else if(eventC.event.equals("text")) {
+                Gdx.app.log("Event", "Called Text Event!");
+                gameScreen.setText(eventC.props.get("text", String.class));
+                gameScreen.setTextLength(Float.parseFloat(eventC.props.get("length", String.class)));
+            } else if(eventC.event.equals("setenergy")) {
+                Gdx.app.log("Event", "Called Set Energy Event!");
+                gameScreen.setEnergy(Float.parseFloat(eventC.props.get("data", String.class)));
             }
         }
     }
@@ -107,8 +117,6 @@ public class CollisionManager implements ContactListener {
         else if(player != null) {
             if(player.energy.isSuperDashOn()) {
                 ec.health = 0;
-            } else {
-                player.dead = true;
             }
         }
     }

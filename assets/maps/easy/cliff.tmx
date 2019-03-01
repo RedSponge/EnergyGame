@@ -139,20 +139,20 @@
     <property name="type" value="zoom"/>
    </properties>
   </object>
-  <object id="3" x="576" y="0" width="16" height="304">
+  <object id="3" x="688" y="0" width="16" height="304">
    <properties>
     <property name="type" value="camera"/>
     <property name="x" value="auto"/>
     <property name="y" value="auto"/>
    </properties>
   </object>
-  <object id="4" x="592" y="0" width="16" height="304">
+  <object id="4" x="688" y="0" width="16" height="304">
    <properties>
     <property name="data" value="1"/>
     <property name="type" value="zoom"/>
    </properties>
   </object>
-  <object id="5" x="608" y="0" width="16" height="304">
+  <object id="5" x="688" y="0" width="16" height="304">
    <properties>
     <property name="type" value="loadnext"/>
    </properties>

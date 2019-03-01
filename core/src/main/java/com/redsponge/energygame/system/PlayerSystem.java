@@ -86,6 +86,11 @@ public class PlayerSystem extends IteratingSystem {
         ColliderComponent collider = Mappers.collider.get(entity);
         PlayerComponent player = Mappers.player.get(entity);
         player.energy = energy;
+        if(player.dead) {
+            body.setLinearVelocity(0, -5);
+            applyFriction(body);
+            return;
+        }
         
         updateFlags(collider);
 

@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class SplashScreenRenderer implements Disposable {
+public class RedSpongeSplashScreenRenderer implements Disposable {
 
     private FitViewport viewport;
     private Stage stage;
@@ -21,7 +21,7 @@ public class SplashScreenRenderer implements Disposable {
     private boolean complete;
     private Image icon;
 
-    public SplashScreenRenderer(SpriteBatch batch) {
+    public RedSpongeSplashScreenRenderer(SpriteBatch batch) {
         this.batch = batch;
         this.am = new AssetManager();
     }

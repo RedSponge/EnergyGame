@@ -49,6 +49,8 @@ public class Textures implements AssetLoader {
     public Animation<AtlasRegion> elecBallExist;
     public Animation<AtlasRegion> elecBallRemove;
 
+    public Animation<AtlasRegion> dead;
+
 
     @Override
     public void load(AssetManager am) {
@@ -100,8 +102,12 @@ public class Textures implements AssetLoader {
         elecBallExist = load(textures, 4, "elecball/exist");
         elecBallRemove = load(textures, 3, "elecball/remove", Constants.ELECTRIC_START_LENGTH / 3);
 
+        dead = new Animation<AtlasRegion>(0.1f, textures.findRegion("dead"));
+        dead.setPlayMode(PlayMode.LOOP);
+
         TextureAtlas enemyTextures = am.get("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
         enemyIdle = load(enemyTextures, 2, "idle", 0.5f);
+
 
         sky = am.get("textures/sky.png");
         title = am.get("textures/title.png");

@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.camera.CameraMode;
@@ -76,68 +78,78 @@ public class RenderingSystem extends SortedIteratingSystem {
         batch.begin();
         SizeComponent size = Mappers.size.get(player);
         PositionComponent pos = Mappers.position.get(player);
-        CircleBottomComponent circle = Mappers.circle.get(player);
         AnimationComponent animation = Mappers.animation.get(player);
         DirectionComponent direction = Mappers.direction.get(player);
         PlayerComponent pc = Mappers.player.get(player);
 
-        if(!sparkNeedsRestart)
-            sparkParticle.setPosition(pos.x, pos.y);
-        if(!electricNeedsRestart)
-            electricParticle.setPosition(pos.x, pos.y);
-        assets.getParticles().render(deltaTime, batch);
+        if(pc.dead) {
+            AtlasRegion f = assets.getTextures().dead.getKeyFrames()[0];
+            batch.draw(f, pos.x - f.getRegionWidth() / 2f, pos.y - f.getRegionHeight() / 2f + 4);
+        } else {
+            if (!sparkNeedsRestart)
+                sparkParticle.setPosition(pos.x, pos.y);
+            if (!electricNeedsRestart)
+                electricParticle.setPosition(pos.x, pos.y);
+            assets.getParticles().render(deltaTime, batch);
 
-        float energy = gameScreen.getEnergy();
+            float energy = gameScreen.getEnergy();
 
-        if(sparkParticle != null && sparkParticle.isComplete() || sparkNeedsRestart) {
-            if(energy > Constants.HEAT_THRESHOLD) {
-                if (sparkNeedsRestart) {
-                    sparkNeedsRestart = false;
-                    sparkParticle = assets.getParticles().sparkle.spawn(new Vector2());
+            if (sparkParticle != null && sparkParticle.isComplete() || sparkNeedsRestart) {
+                if (energy > Constants.HEAT_THRESHOLD) {
+                    if (sparkNeedsRestart) {
+                        sparkNeedsRestart = false;
+                        sparkParticle = assets.getParticles().sparkle.spawn(new Vector2());
+                    } else {
+                        sparkParticle.reset();
+                    }
                 } else {
-                    sparkParticle.reset();
+                    sparkNeedsRestart = true;
                 }
-            } else {
-                sparkNeedsRestart = true;
             }
-        }
 
-        if(electricParticle != null && electricParticle.isComplete() || electricNeedsRestart) {
-            if(energy > Constants.ELECTRIC_THRESHOLD) {
-                if (electricNeedsRestart) {
-                    electricNeedsRestart = false;
-                    electricParticle = assets.getParticles().electric.spawn(new Vector2());
+            if (electricParticle != null && electricParticle.isComplete() || electricNeedsRestart) {
+                if (energy > Constants.ELECTRIC_THRESHOLD) {
+                    if (electricNeedsRestart) {
+                        electricNeedsRestart = false;
+                        electricParticle = assets.getParticles().electric.spawn(new Vector2());
+                    } else {
+                        electricParticle.reset();
+                    }
                 } else {
-                    electricParticle.reset();
+                    electricNeedsRestart = true;
                 }
-            } else {
-                electricNeedsRestart = true;
-            }
-        }
-
-        assets.getParticles().cleanUp();
-
-
-        animation.timeSinceStart += deltaTime;
-        AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
-
-        batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - Constants.PLAYER_LOWER_PIXELS, frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
-        if(pc.energy.isElectricFieldOn() || pc.energy.getElectric().isRemoving()) {
-            float time = GeneralUtils.secondsSince(pc.energy.getElectric().getStartTime());
-
-            AtlasRegion f;
-            if(pc.energy.getElectric().isChargingField()) {
-                 f = assets.getTextures().elecBallSpawn.getKeyFrame(time);
-            } else if(pc.energy.getElectric().isRemoving()){
-                f = assets.getTextures().elecBallRemove.getKeyFrame(time - pc.energy.getElectric().getLength());
-            } else {
-                f = assets.getTextures().elecBallExist.getKeyFrame(time);
             }
 
-            batch.draw(f, pos.x - f.getRegionWidth(), pos.y - f.getRegionHeight(), f.getRegionWidth() * 2, f.getRegionHeight() * 2);
+            assets.getParticles().cleanUp();
+
+
+            animation.timeSinceStart += deltaTime;
+            AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
+
+            batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - Constants.PLAYER_LOWER_PIXELS, frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+            if (pc.energy.isElectricFieldOn() || pc.energy.getElectric().isRemoving()) {
+                float time = GeneralUtils.secondsSince(pc.energy.getElectric().getStartTime());
+
+                AtlasRegion f;
+                if (pc.energy.getElectric().isChargingField()) {
+                    f = assets.getTextures().elecBallSpawn.getKeyFrame(time);
+                } else if (pc.energy.getElectric().isRemoving()) {
+                    f = assets.getTextures().elecBallRemove.getKeyFrame(time - pc.energy.getElectric().getLength());
+                } else {
+                    f = assets.getTextures().elecBallExist.getKeyFrame(time);
+                }
+
+                batch.draw(f, pos.x - f.getRegionWidth(), pos.y - f.getRegionHeight(), f.getRegionWidth() * 2, f.getRegionHeight() * 2);
+            }
         }
         super.update(deltaTime);
         batch.end();
+
+        if(pos.x < viewport.getCamera().position.x - viewport.getWorldWidth() * ((OrthographicCamera) viewport.getCamera()).zoom / 2 - 50 && !pc.dead) {
+            pc.dead = true;
+            gameScreen.setDeathTime(TimeUtils.nanoTime());
+            assets.getMusics().background.dispose();
+        }
 
         mapRenderer.renderForeground(viewport);
     }
@@ -174,6 +186,12 @@ public class RenderingSystem extends SortedIteratingSystem {
             viewport.getCamera().position.x = pos.x;
         }
 
+        PlayerComponent pc = Mappers.player.get(player);
+
+        if(pc.dead) {
+            viewport.getCamera().position.lerp(new Vector3(pos.x + 10, pos.y - 10, 0), 0.1f);
+            desiredZoom = 0.3f;
+        }
         viewport.apply();
     }
 

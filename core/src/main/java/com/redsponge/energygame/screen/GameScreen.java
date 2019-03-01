@@ -4,9 +4,11 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -21,12 +23,14 @@ import com.redsponge.energygame.component.PositionComponent;
 import com.redsponge.energygame.map.MapFetcher;
 import com.redsponge.energygame.map.MapManager;
 import com.redsponge.energygame.system.EnemyCleanupSystem;
-import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.system.PhysicsDebugSystem;
+import com.redsponge.energygame.transition.TransitionFade;
+import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.system.PhysicsSystem;
 import com.redsponge.energygame.system.PlayerSystem;
 import com.redsponge.energygame.system.RenderingSystem;
 import com.redsponge.energygame.util.EntityFactory;
+import com.redsponge.energygame.util.GeneralUtils;
 
 public class GameScreen extends AbstractScreen {
 
@@ -44,6 +48,10 @@ public class GameScreen extends AbstractScreen {
     private float displayedEnergy;
 
     private PooledEffect currentParticle;
+    private long deathTime;
+
+    private String text;
+    private float textLength;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -70,9 +78,9 @@ public class GameScreen extends AbstractScreen {
         engine = new Engine();
 
 
-        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null, assets);
+        PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null, assets, this);
 
-        mapManager = new MapManager(ps, new TmxMapLoader().load(MapFetcher.getEasyMap()), engine);
+        mapManager = new MapManager(ps, new TmxMapLoader().load(/*"maps/tutorial/tutorial_shrunk.tmx"*/MapFetcher.getEasyMap()), engine);
 
         ps.setMapManager(mapManager);
         player = EntityFactory.getPlayer(assets);
@@ -85,7 +93,7 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
         engine.addSystem(new EnemyCleanupSystem(assets));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
@@ -100,6 +108,14 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void tick(float delta) {
+        ((OrthographicCamera)viewport.getCamera()).zoom -= 0.01f;
+        if(Mappers.player.get(player).dead) {
+            if(Gdx.input.isKeyJustPressed(Keys.SPACE)){
+                ga.transitionTo(new GameScreen(ga), new TransitionFade(), 2);
+            } else if(Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
+                ga.transitionTo(new MenuScreen(ga), new TransitionFade(), 2);
+            }
+        }
     }
 
     @Override
@@ -142,6 +158,29 @@ public class GameScreen extends AbstractScreen {
         float progress = displayedEnergy / Constants.MAX_ENERGY;
         shapeRenderer.rect(15, hudViewport.getWorldHeight() - 15, (viewport.getWorldWidth() - 30) * progress, 5);
         shapeRenderer.end();
+
+        if(Mappers.player.get(player).dead) {
+            float opacity = GeneralUtils.secondsSince(deathTime) / 1f;
+            opacity = opacity > 1 ? 1 : opacity;
+
+            batch.begin();
+            assets.getFonts().titleFont.setColor(0, 0, 0, opacity);
+            assets.getFonts().titleFont.draw(batch, "You died.", hudViewport.getWorldWidth() / 2 - 150, 70);
+            assets.getFonts().titleFont.getData().setScale(0.2f);
+            assets.getFonts().titleFont.draw(batch, "Press space to try again!" ,120, 100);
+            assets.getFonts().titleFont.draw(batch, "Press escape to return to menu!" ,130, 130);
+            assets.getFonts().titleFont.getData().setScale(1);
+            batch.end();
+        }
+        if(textLength > 0) {
+            batch.begin();
+            assets.getFonts().pixelMix.setColor(1, 1, 1, 1);
+            assets.getFonts().pixelMix.getData().setScale(0.2f);
+            GlyphLayout layout = new GlyphLayout(assets.getFonts().pixelMix, text);
+            assets.getFonts().pixelMix.draw(batch, text, hudViewport.getWorldWidth() / 2 - layout.width / 2, hudViewport.getWorldHeight() - 30);
+            textLength -= Gdx.graphics.getDeltaTime();
+            batch.end();
+        }
     }
 
     @Override
@@ -170,9 +209,25 @@ public class GameScreen extends AbstractScreen {
         engine.removeEntity(entity);
     }
 
+    public void setDeathTime(long deathTime) {
+        this.deathTime = deathTime;
+    }
+
     @Override
     public void dispose() {
-        map.dispose();
+        engine.removeAllEntities();
         assets.getMusics().background.dispose();
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setTextLength(float textLength) {
+        this.textLength = textLength;
+    }
+
+    public void setEnergy(float energy) {
+        this.energy = energy;
     }
 }

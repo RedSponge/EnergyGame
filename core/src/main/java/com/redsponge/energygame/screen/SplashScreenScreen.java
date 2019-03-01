@@ -5,11 +5,11 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.redsponge.energygame.splashscreen.SplashScreenRenderer;
+import com.redsponge.energygame.splashscreen.RedSpongeSplashScreenRenderer;
 import com.redsponge.energygame.transition.TransitionFade;
 
 public class SplashScreenScreen extends AbstractScreen {
-    private SplashScreenRenderer splashScreenRenderer;
+    private RedSpongeSplashScreenRenderer redSpongeSplashScreenRenderer;
     private ScalingViewport scalingViewport;
 
     public SplashScreenScreen(GameAccessor ga) {
@@ -20,13 +20,13 @@ public class SplashScreenScreen extends AbstractScreen {
     public void show() {
         super.show();
         this.scalingViewport = new ScalingViewport(Scaling.fill, 1, 1);
-        splashScreenRenderer = new SplashScreenRenderer(batch);
-        splashScreenRenderer.begin();
+        redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch);
+        redSpongeSplashScreenRenderer.begin();
     }
 
     @Override
     public void tick(float delta) {
-        splashScreenRenderer.tick(delta);
+        redSpongeSplashScreenRenderer.tick(delta);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class SplashScreenScreen extends AbstractScreen {
         Gdx.gl.glClearColor(255/255f, 237/255f, 178/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(!splashScreenRenderer.isComplete() && !Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-            splashScreenRenderer.render();
+        if(!redSpongeSplashScreenRenderer.isComplete() && !Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            redSpongeSplashScreenRenderer.render();
         } else if(!transitioning) {
             ga.transitionTo(new MenuScreen(ga), new TransitionFade(), 2);
         }
@@ -43,13 +43,13 @@ public class SplashScreenScreen extends AbstractScreen {
 
     @Override
     public void resize(int width, int height) {
-        splashScreenRenderer.resize(width, height);
+        redSpongeSplashScreenRenderer.resize(width, height);
         scalingViewport.update(width, height, true);
     }
 
 
     @Override
     public void dispose() {
-        splashScreenRenderer.dispose();
+        redSpongeSplashScreenRenderer.dispose();
     }
 }

@@ -20,10 +20,11 @@ public class MapManager implements Disposable {
         this.engine = engine;
         this.currentMapOffset = 0;
         this.ps = ps;
+        head = new MapHolder(initialMap, ps, 0, engine);
     }
 
     public void init() {
-        loadNextMap();
+        head.setEntities(ps.loadNewMap(head.getMap(), currentMapOffset));
         loadNextMap();
     }
 

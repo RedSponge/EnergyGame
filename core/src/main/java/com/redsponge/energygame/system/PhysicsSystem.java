@@ -35,6 +35,7 @@ import com.redsponge.energygame.component.PositionComponent;
 import com.redsponge.energygame.component.SizeComponent;
 import com.redsponge.energygame.component.VelocityComponent;
 import com.redsponge.energygame.map.MapManager;
+import com.redsponge.energygame.screen.GameScreen;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.util.EntityFactory;
 import com.redsponge.energygame.util.GeneralUtils;
@@ -55,18 +56,20 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
      */
     private MapManager mapManager;
     private Assets assets;
+    private GameScreen gameScreen;
 
-    public PhysicsSystem(Vector2 gravity, float pixelsPerMeter, MapManager mapManager, Assets assets) {
+    public PhysicsSystem(Vector2 gravity, float pixelsPerMeter, MapManager mapManager, Assets assets, GameScreen gameScreen) {
         super(Family.all(PositionComponent.class, SizeComponent.class, VelocityComponent.class, PhysicsComponent.class).get(), Constants.PHYSICS_PRIORITY);
         this.gravity = gravity;
         this.pixelsPerMeter = pixelsPerMeter;
         this.mapManager = mapManager;
         this.assets = assets;
+        this.gameScreen = gameScreen;
         this.world = new World(this.gravity, true);
     }
 
-    public PhysicsSystem(MapManager mapManager, Assets assets) {
-        this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM, mapManager, assets);
+    public PhysicsSystem(MapManager mapManager, Assets assets, GameScreen gameScreen) {
+        this(Constants.DEFAULT_GRAVITY, Constants.DEFAULT_PPM, mapManager, assets, gameScreen);
     }
 
     public void setMapManager(MapManager mapManager) {
@@ -231,7 +234,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        this.world.setContactListener(new CollisionManager(engine, mapManager));
+        this.world.setContactListener(new CollisionManager(engine, mapManager, gameScreen));
     }
 
     @Override

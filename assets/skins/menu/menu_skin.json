@@ -54,8 +54,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font
-		fontColor: black
+		font: pixelmix16
+		fontColor: white
 	}
 	title: {
 		font: title
@@ -81,7 +81,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font
+		font: pixelmix16
 		fontColor: black
 	}
 }

@@ -1,5 +1,18 @@
 
 game_textures.png
+size: 64,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+dead
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+game_textures2.png
 size: 1024,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -75,7 +88,7 @@ elecball/spawn
   offset: 0, 0
   index: 3
 
-game_textures2.png
+game_textures3.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -312,7 +325,7 @@ high/walljump
   offset: 0, 0
   index: -1
 
-game_textures3.png
+game_textures4.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -500,7 +513,7 @@ low/walljump
   offset: 0, 0
   index: -1
 
-game_textures4.png
+game_textures5.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -688,7 +701,7 @@ med/walljump
   offset: 0, 0
   index: -1
 
-game_textures5.png
+game_textures6.png
 size: 256,64
 format: RGBA8888
 filter: Nearest,Nearest

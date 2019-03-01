@@ -6,7 +6,7 @@ filter: Linear,Linear
 repeat: none
 button_hold
   rotate: false
-  xy: 771, 769
+  xy: 508, 502
   size: 32, 32
   split: 7, 7, 7, 7
   orig: 32, 32
@@ -14,7 +14,7 @@ button_hold
   index: -1
 button_hover
   rotate: false
-  xy: 1, 308
+  xy: 771, 769
   size: 32, 32
   split: 7, 7, 7, 7
   orig: 32, 32
@@ -22,7 +22,7 @@ button_hover
   index: -1
 button_reg
   rotate: false
-  xy: 508, 502
+  xy: 1, 308
   size: 32, 32
   split: 7, 7, 7, 7
   orig: 32, 32

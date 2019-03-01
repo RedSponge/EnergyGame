@@ -1,11 +1,13 @@
 package com.redsponge.energygame.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -14,9 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array.ArrayIterator;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.redsponge.energygame.map.MapFetcher;
 import com.redsponge.energygame.map.MapUtils;
@@ -48,10 +54,25 @@ public class MenuScreen extends AbstractScreen {
 
     public void initMenu() {
         stage = new Stage(viewport, batch);
+        loadMainMenu();
+        Gdx.input.setInputProcessor(stage);
 
-        Image title = new Image(assets.getTextures().title);
-        title.setPosition(10, viewport.getWorldHeight() - 150);
-        title.setScale(2);
+        map = new TmxMapLoader().load("maps/easy/enemy_of_the_hill.tmx");
+        mapRenderer = new OffsettedOrthogonalTiledMapRenderer(map, batch);
+
+        assets.getMusics().background.load();
+        assets.getMusics().background.getInstance().setLooping(true);
+        assets.getMusics().background.getInstance().play();
+    }
+
+    public void loadMainMenu() {
+        boolean shouldDelay = unloadCurrent();
+        float loadDelay = shouldDelay ? 1 : 0;
+
+        Label title = new Label("MicroMania!", new LabelStyle(assets.getFonts().titleFont, Color.BLACK));
+        title.setColor(Color.BLACK);
+        title.setPosition(viewport.getWorldWidth() / 2, viewport.getWorldHeight() + 50, Align.center);
+        title.addAction(Actions.delay(loadDelay, Actions.moveTo(title.getX(), viewport.getWorldHeight() - title.getHeight() - 10, 1, Interpolation.swingOut)));
         stage.addActor(title);
 
         TextButton startButton = new TextButton("Run!", assets.getSkins().menu);
@@ -66,7 +87,7 @@ public class MenuScreen extends AbstractScreen {
         creditsButton.setPosition(-creditsButton.getWidth(), viewport.getWorldHeight() - 300);
         stage.addActor(creditsButton);
 
-        TextButton exitButton = new TextButton("Exit ;-; (pls no i has wif an kid)", assets.getSkins().menu);
+        TextButton exitButton = new TextButton("Exit!", assets.getSkins().menu);
         exitButton.setPosition(-exitButton.getWidth(), viewport.getWorldHeight() - 350);
         stage.addActor(exitButton);
         exitButton.addListener(new ClickListener() {
@@ -79,7 +100,15 @@ public class MenuScreen extends AbstractScreen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                assets.getMusics().background.dispose();
                 ga.transitionTo(new GameScreen(ga), new TransitionFade(), 1);
+            }
+        });
+
+        creditsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                loadCredits();
             }
         });
 
@@ -89,7 +118,7 @@ public class MenuScreen extends AbstractScreen {
 
         for(int i = 0; i < buttons.length; i++) {
             final int j = i;
-            buttons[i].addAction(Actions.delay(i * delay, Actions.moveTo(30, buttons[i].getY(), 1f, Interpolation.swing)));
+            buttons[i].addAction(Actions.delay(i * delay + loadDelay, Actions.moveTo(30, buttons[i].getY(), 1f, Interpolation.swing)));
             buttons[i].addListener(new ClickListener() {
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -104,16 +133,65 @@ public class MenuScreen extends AbstractScreen {
                 }
             });
         }
+    }
 
-        Gdx.input.setInputProcessor(stage);
+    public boolean unloadCurrent() {
+        boolean actorsExisted = false;
+        for(Actor a : new ArrayIterator<Actor>(stage.getActors())) {
+            actorsExisted = true;
+            if(a instanceof Button) {
+                ((Button)a).setDisabled(true);
+                a.clearListeners();
+                a.addAction(Actions.moveTo(-a.getWidth(), a.getY(), 1, Interpolation.swingIn));
+            } else if(a instanceof Label) {
+                a.addAction(Actions.moveTo(a.getX(), -a.getHeight(), 1, Interpolation.swingIn));
+            }
+            a.addAction(Actions.delay(1, new Action() {
+                @Override
+                public boolean act(float delta) {
+                    actor.remove();
+                    return true;
+                }
+            }));
+        }
+        return actorsExisted;
+    }
 
-        map = new TmxMapLoader().load("maps/easy/enemy_of_the_hill.tmx");
-        mapRenderer = new OffsettedOrthogonalTiledMapRenderer(map, batch);
+    public void loadCredits() {
+        String[][] credits = {
+                {"Programming:", "RedSponge"},
+                {"Art:", "RedSponge &\nTheCrispyToasty"},
+                {"Music:", "TheCrispyToasty"},
+                {"", ""},
+                {"Tools Used:", "BFXR, Bosca Ceoil, Audacity,\nThe Libgdx Skin Composer\nand Tiled"},
+                {"Random Message: ", GeneralUtils.randomFromArr(new String[] {"We hope you enjoy!", "#MicrowaveFTW", "Libgdx is cool", "Press 'Space' To Jump!",
+                "I wonder how much\ndoes a Shawarma cost.."})}
+        };
+        unloadCurrent();
+        final float spacing = 40;
+        final float fromTop = 60;
+        for(int i = 0; i < credits.length; i++) {
+            Label l = new Label(credits[i][0], assets.getSkins().menu);
+            l.setPosition(viewport.getWorldWidth() / 6, -l.getHeight() - fromTop - spacing * i);
+            l.addAction(Actions.delay(1 + i * 0.2f, Actions.moveTo(l.getX(), viewport.getWorldHeight() - fromTop - spacing * i, 0.5f, Interpolation.pow2)));
+            stage.addActor(l);
 
-        assets.getMusics().background.load();
-        assets.getMusics().background.getInstance().setLooping(true);
-        assets.getMusics().background.getInstance().play();
+            Label l2 = new Label(credits[i][1], assets.getSkins().menu);
+            l2.setPosition(viewport.getWorldWidth() / 6 * 3, -l2.getHeight() - fromTop - spacing * i);
+            l2.addAction(Actions.delay(1.5f + i * 0.2f, Actions.moveTo(l2.getX(), viewport.getWorldHeight() - fromTop - spacing * i, 0.5f, Interpolation.pow2)));
+            stage.addActor(l2);
+        }
+        TextButton back = new TextButton("Go Back", assets.getSkins().menu);
+        back.setPosition(viewport.getWorldWidth() / 2, -back.getHeight(), Align.center);
+        back.addAction(Actions.delay(0.2f * credits.length + 1, Actions.moveTo(back.getX(), 50, 0.5f, Interpolation.pow2)));
 
+        back.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                loadMainMenu();
+            }
+        });
+        stage.addActor(back);
     }
 
     @Override

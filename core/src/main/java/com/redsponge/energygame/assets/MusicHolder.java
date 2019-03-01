@@ -24,6 +24,6 @@ public class MusicHolder implements Disposable {
 
     @Override
     public void dispose() {
-        instance.dispose();
+        if(instance != null) instance.dispose();
     }
 }
