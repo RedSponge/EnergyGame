@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.audio.OpenALMusic;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
@@ -50,8 +51,16 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
+
+    }
+
+    @Override
+    public void transitionSwitch() {
         assets.finishLoading();
         assets.getResources();
+        assets.getMusics().background.load();
+        assets.getMusics().background.getInstance().setLooping(true);
+        assets.getMusics().background.getInstance().play();
 
         viewport = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         background = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
@@ -76,7 +85,7 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
         engine.addSystem(new EnemyCleanupSystem(assets));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
@@ -85,11 +94,12 @@ public class GameScreen extends AbstractScreen {
 
         displayedEnergy = 0;
         currentParticle = assets.getParticles().sparkle.spawn(new Vector2(0, 0));
+
+        viewport.getCamera().position.set(100, viewport.getWorldHeight(), 0);
     }
 
     @Override
     public void tick(float delta) {
-//        addEnergy(3);
     }
 
     @Override
@@ -163,5 +173,6 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void dispose() {
         map.dispose();
+        assets.getMusics().background.dispose();
     }
 }

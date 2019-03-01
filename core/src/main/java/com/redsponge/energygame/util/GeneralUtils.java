@@ -1,5 +1,6 @@
 package com.redsponge.energygame.util;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -32,5 +33,9 @@ public class GeneralUtils {
 
     public static <T> T randomFromArr(T[] list) {
         return list[random.nextInt(list.length)];
+    }
+
+    public static void playSoundRandomlyPitched(Sound sound) {
+        sound.play(0.5f, 0.5f + random.nextFloat(), 0);
     }
 }

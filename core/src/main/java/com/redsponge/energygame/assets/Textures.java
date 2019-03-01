@@ -45,6 +45,10 @@ public class Textures implements AssetLoader {
 
     public Animation<AtlasRegion> highElectricStart;
 
+    public Animation<AtlasRegion> elecBallSpawn;
+    public Animation<AtlasRegion> elecBallExist;
+    public Animation<AtlasRegion> elecBallRemove;
+
 
     @Override
     public void load(AssetManager am) {
@@ -91,6 +95,10 @@ public class Textures implements AssetLoader {
         medWallJump.setPlayMode(PlayMode.LOOP);
         highWallJump = new Animation<AtlasRegion>(0.1f, textures.findRegion("high/walljump"));
         highWallJump.setPlayMode(PlayMode.LOOP);
+
+        elecBallSpawn = load(textures, 3, "elecball/spawn", Constants.ELECTRIC_START_LENGTH / 3);
+        elecBallExist = load(textures, 4, "elecball/exist");
+        elecBallRemove = load(textures, 3, "elecball/remove", Constants.ELECTRIC_START_LENGTH / 3);
 
         TextureAtlas enemyTextures = am.get("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
         enemyIdle = load(enemyTextures, 2, "idle", 0.5f);

@@ -1,6 +1,5 @@
 package com.redsponge.energygame.assets;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -12,6 +11,7 @@ public class Assets implements Disposable {
     private Textures textures;
     private Fonts fonts;
     private Skins skins;
+    private Musics musics;
 
     public Assets() {
         am = new AssetManager();
@@ -20,12 +20,14 @@ public class Assets implements Disposable {
         textures = new Textures();
         fonts = new Fonts();
         skins = new Skins();
+        musics = new Musics();
 
         sounds.load(am);
         particles.load(am);
         textures.load(am);
         fonts.load(am);
         skins.load(am);
+        musics.load(am);
     }
 
     public void getResources() {
@@ -34,6 +36,7 @@ public class Assets implements Disposable {
         textures.getResources(am);
         fonts.getResources(am);
         skins.getResources(am);
+        musics.getResources(am);
     }
 
     public Sounds getSounds() {
@@ -60,6 +63,7 @@ public class Assets implements Disposable {
     public void dispose() {
         am.dispose();
         fonts.dispose();
+        musics.disposeAll();
     }
 
     public void finishLoading() {
@@ -68,5 +72,9 @@ public class Assets implements Disposable {
 
     public boolean update() {
         return am.update();
+    }
+
+    public Musics getMusics() {
+        return musics;
     }
 }

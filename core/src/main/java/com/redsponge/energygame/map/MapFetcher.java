@@ -1,10 +1,11 @@
 package com.redsponge.energygame.map;
 
+import com.badlogic.gdx.Gdx;
 import com.redsponge.energygame.util.GeneralUtils;
 
 public class MapFetcher {
 
-    private static final String[] EASY_MAPS = {"bridge", "cave", "cliff", "enemy_of_the_hill", "path_of_enemies", "the_holes"};
+    private static final String[] EASY_MAPS = {"bridge", "cave", "cliff", "path_of_enemies", "the_holes"};
     private static String lastChosen = EASY_MAPS[0];
 
     public static String getEasyMap() {
@@ -13,8 +14,8 @@ public class MapFetcher {
             choice = GeneralUtils.randomFromArr(EASY_MAPS);
         } while(choice.equals(lastChosen));
         lastChosen = choice;
-        System.out.println(choice);
-        return "maps/easy/" + "path_of_enemies" + ".tmx";
+        Gdx.app.log("MapFetcher", "Chosen map " + choice);
+        return "maps/easy/" + choice + ".tmx";
     }
 
 }

@@ -73,7 +73,7 @@ public class PlayerSystem extends IteratingSystem {
         this.lastMoved = 0;
 
 
-        this.energy = new EnergyManager(gameScreen, pixelsPerMeter);
+        this.energy = new EnergyManager(gameScreen, pixelsPerMeter, assets);
     }
 
     public PlayerSystem(GameScreen gameScreen, Assets assets) {
@@ -226,6 +226,7 @@ public class PlayerSystem extends IteratingSystem {
                 takeControlWhileWallJump = false;
             }
             body.setLinearVelocity(5 * side, 15);
+            GeneralUtils.playSoundRandomlyPitched(assets.getSounds().jump);
             wallJumpStartTime = TimeUtils.nanoTime();
         }
         if(GeneralUtils.secondsSince(wallJumpStartTime) > wallJumpLength) {
@@ -324,6 +325,7 @@ public class PlayerSystem extends IteratingSystem {
         jumping = true;
         jumpStartTime = TimeUtils.nanoTime();
         body.applyLinearImpulse(new Vector2(0, jumpHeight * delta * 50), body.getWorldCenter(), true);
+        GeneralUtils.playSoundRandomlyPitched(assets.getSounds().jump);
     }
 
     /**

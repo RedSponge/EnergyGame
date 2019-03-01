@@ -1,17 +1,20 @@
 package com.redsponge.energygame.energy;
 
 import com.badlogic.ashley.core.Entity;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.screen.GameScreen;
 
 public class EnergyManager {
     private HeatEnergy heat;
     private LightEnergy light;
     private ElectricEnergy electric;
+    private Assets assets;
 
-    public EnergyManager(GameScreen gameScreen, float pixelsPerMeter) {
-        this.heat = new HeatEnergy(pixelsPerMeter);
-        this.light = new LightEnergy(pixelsPerMeter);
-        this.electric = new ElectricEnergy();
+    public EnergyManager(GameScreen gameScreen, float pixelsPerMeter, Assets assets) {
+        this.heat = new HeatEnergy(pixelsPerMeter, assets);
+        this.light = new LightEnergy(pixelsPerMeter, assets);
+        this.electric = new ElectricEnergy(pixelsPerMeter, assets);
+        this.assets = assets;
     }
 
     public void setPlayer(Entity player) {

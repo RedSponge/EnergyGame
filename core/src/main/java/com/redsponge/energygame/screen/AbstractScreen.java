@@ -32,6 +32,8 @@ public abstract class AbstractScreen extends ScreenAdapter {
         render();
     }
 
+    public void transitionSwitch() {}
+
     public abstract void tick(float delta);
     public abstract void render();
 

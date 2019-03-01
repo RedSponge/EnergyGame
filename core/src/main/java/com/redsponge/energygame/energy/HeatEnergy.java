@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.component.DirectionComponent;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
@@ -27,9 +28,11 @@ public class HeatEnergy implements Energy {
 
     private float wantedY;
     private long superJumpStarted;
+    private Assets assets;
 
-    public HeatEnergy(float pixelsPerMeter) {
+    public HeatEnergy(float pixelsPerMeter, Assets assets) {
         this.pixelsPerMeter = pixelsPerMeter;
+        this.assets = assets;
         regularStartTime = 0;
         superJumpStarted = 0;
     }
@@ -47,6 +50,8 @@ public class HeatEnergy implements Energy {
         }
         regularStartTime = TimeUtils.nanoTime();
         Mappers.animation.get(player).timeSinceStart = 0;
+        GeneralUtils.playSoundRandomlyPitched(assets.getSounds().heatAttack);
+
     }
 
     public void setOnGround(boolean onGround) {
@@ -55,12 +60,6 @@ public class HeatEnergy implements Energy {
 
     @Override
     public void upInitiated(GameScreen gameScreen) {
-        if(!onGround) {
-            return;
-        }
-        superJumpStarted = TimeUtils.nanoTime();
-        PhysicsComponent p = Mappers.physics.get(player);
-        wantedY = p.body.getPosition().y + 4;
     }
 
     @Override

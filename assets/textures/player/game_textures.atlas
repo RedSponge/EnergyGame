@@ -1,5 +1,81 @@
 
 game_textures.png
+size: 1024,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+elecball/exist
+  rotate: false
+  xy: 2, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+elecball/exist
+  rotate: false
+  xy: 68, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+elecball/exist
+  rotate: false
+  xy: 134, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+elecball/exist
+  rotate: false
+  xy: 200, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 4
+elecball/remove
+  rotate: false
+  xy: 266, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+elecball/remove
+  rotate: false
+  xy: 332, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+elecball/remove
+  rotate: false
+  xy: 398, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+elecball/spawn
+  rotate: false
+  xy: 464, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
+elecball/spawn
+  rotate: false
+  xy: 530, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+elecball/spawn
+  rotate: false
+  xy: 596, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 3
+
+game_textures2.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -236,7 +312,7 @@ high/walljump
   offset: 0, 0
   index: -1
 
-game_textures2.png
+game_textures3.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -424,7 +500,7 @@ low/walljump
   offset: 0, 0
   index: -1
 
-game_textures3.png
+game_textures4.png
 size: 512,128
 format: RGBA8888
 filter: Nearest,Nearest
@@ -612,7 +688,7 @@ med/walljump
   offset: 0, 0
   index: -1
 
-game_textures4.png
+game_textures5.png
 size: 256,64
 format: RGBA8888
 filter: Nearest,Nearest

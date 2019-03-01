@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.component.DirectionComponent.Direction;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
@@ -23,9 +24,11 @@ public class LightEnergy implements Energy {
     private Direction dashDir;
     private Fixture attacker;
     private float pixelsPerMeter;
+    private Assets assets;
 
-    public LightEnergy(float pixelsPerMeter) {
+    public LightEnergy(float pixelsPerMeter, Assets assets) {
         this.pixelsPerMeter = pixelsPerMeter;
+        this.assets = assets;
         superDashStartTime = 0;
     }
 
@@ -55,6 +58,7 @@ public class LightEnergy implements Energy {
             attacker.setUserData(Constants.ATTACK_DATA_ID);
             shape.dispose();
 
+            GeneralUtils.playSoundRandomlyPitched(assets.getSounds().dash);
         }
     }
 

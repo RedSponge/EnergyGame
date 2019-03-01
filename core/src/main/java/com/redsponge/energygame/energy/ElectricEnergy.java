@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
 import com.redsponge.energygame.util.Constants;
@@ -18,8 +19,12 @@ public class ElectricEnergy implements Energy {
     private Entity player;
     private long protectionStartTime;
     private float protectionLength;
+    private float pixelsPerMeter;
+    private Assets assets;
 
-    public ElectricEnergy() {
+    public ElectricEnergy(float pixelsPerMeter, Assets assets) {
+        this.pixelsPerMeter = pixelsPerMeter;
+        this.assets = assets;
         protectionStartTime = 0;
         protectionLength = 5;
     }
@@ -40,13 +45,14 @@ public class ElectricEnergy implements Energy {
             FixtureDef fdef = new FixtureDef();
             fdef.isSensor = true;
             CircleShape circle = new CircleShape();
-            circle.setRadius(3);
+            circle.setRadius(44 / pixelsPerMeter);
             fdef.shape = circle;
             PhysicsComponent p = Mappers.physics.get(player);
             protectionField = p.body.createFixture(fdef);
             protectionField.setUserData(Constants.ATTACK_DATA_ID);
             circle.dispose();
         }
+        GeneralUtils.playSoundRandomlyPitched(assets.getSounds().electric_activate);
         protectionStartTime = TimeUtils.nanoTime();
         Mappers.animation.get(player).timeSinceStart = 0;
     }
@@ -79,7 +85,19 @@ public class ElectricEnergy implements Energy {
         return GeneralUtils.secondsSince(protectionStartTime) < Constants.ELECTRIC_START_LENGTH;
     }
 
+    public boolean isRemoving() {
+        return !isFieldOn() && GeneralUtils.secondsSince(protectionStartTime) < Constants.ELECTRIC_START_LENGTH + protectionLength;
+    }
+
     public boolean isFieldOn() {
         return GeneralUtils.secondsSince(protectionStartTime) <= protectionLength;
+    }
+
+    public long getStartTime() {
+        return protectionStartTime;
+    }
+
+    public float getLength() {
+        return protectionLength;
     }
 }

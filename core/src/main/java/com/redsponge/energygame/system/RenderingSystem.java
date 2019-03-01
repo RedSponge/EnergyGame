@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.SortedIteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,6 +21,7 @@ import com.redsponge.energygame.map.MapManager;
 import com.redsponge.energygame.map.MapManagerRenderer;
 import com.redsponge.energygame.screen.GameScreen;
 import com.redsponge.energygame.util.Constants;
+import com.redsponge.energygame.util.GeneralUtils;
 
 public class RenderingSystem extends SortedIteratingSystem {
 
@@ -122,6 +122,20 @@ public class RenderingSystem extends SortedIteratingSystem {
         AtlasRegion frame = animation.animation.getKeyFrame(animation.timeSinceStart);
 
         batch.draw(frame, pos.x - (size.width) * direction.direction.mult, pos.y - size.height / 2 - Constants.PLAYER_LOWER_PIXELS, frame.getRegionWidth() * direction.direction.mult, frame.getRegionHeight());
+        if(pc.energy.isElectricFieldOn() || pc.energy.getElectric().isRemoving()) {
+            float time = GeneralUtils.secondsSince(pc.energy.getElectric().getStartTime());
+
+            AtlasRegion f;
+            if(pc.energy.getElectric().isChargingField()) {
+                 f = assets.getTextures().elecBallSpawn.getKeyFrame(time);
+            } else if(pc.energy.getElectric().isRemoving()){
+                f = assets.getTextures().elecBallRemove.getKeyFrame(time - pc.energy.getElectric().getLength());
+            } else {
+                f = assets.getTextures().elecBallExist.getKeyFrame(time);
+            }
+
+            batch.draw(f, pos.x - f.getRegionWidth(), pos.y - f.getRegionHeight(), f.getRegionWidth() * 2, f.getRegionHeight() * 2);
+        }
         super.update(deltaTime);
         batch.end();
 

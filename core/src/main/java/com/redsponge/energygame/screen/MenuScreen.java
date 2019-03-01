@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.redsponge.energygame.map.MapFetcher;
 import com.redsponge.energygame.map.MapUtils;
 import com.redsponge.energygame.map.OffsettedOrthogonalTiledMapRenderer;
+import com.redsponge.energygame.transition.TransitionFade;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.util.GeneralUtils;
 
@@ -39,7 +40,7 @@ public class MenuScreen extends AbstractScreen {
     }
 
     @Override
-    public void show() {
+    public void transitionSwitch() {
         viewport = new FitViewport(Constants.MENU_WIDTH, Constants.MENU_HEIGHT);
         mapViewport = new FitViewport(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         loadedResources = false;
@@ -67,13 +68,20 @@ public class MenuScreen extends AbstractScreen {
 
         TextButton exitButton = new TextButton("Exit ;-; (pls no i has wif an kid)", assets.getSkins().menu);
         exitButton.setPosition(-exitButton.getWidth(), viewport.getWorldHeight() - 350);
+        stage.addActor(exitButton);
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
-        stage.addActor(exitButton);
+
+        startButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ga.transitionTo(new GameScreen(ga), new TransitionFade(), 1);
+            }
+        });
 
         final TextButton[] buttons = {startButton, optionsButton, creditsButton, exitButton};
 
@@ -101,13 +109,16 @@ public class MenuScreen extends AbstractScreen {
 
         map = new TmxMapLoader().load("maps/easy/enemy_of_the_hill.tmx");
         mapRenderer = new OffsettedOrthogonalTiledMapRenderer(map, batch);
+
+        assets.getMusics().background.load();
+        assets.getMusics().background.getInstance().setLooping(true);
+        assets.getMusics().background.getInstance().play();
+
     }
 
     @Override
     public void tick(float delta) {
         if(!assets.update()) {
-//            Gdx.app.log("MenuScreen", "Loading Assets!");
-            return;
         } else if(!loadedResources) {
             assets.getResources();
             loadedResources = true;
@@ -161,5 +172,6 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void dispose() {
         map.dispose();
+        assets.getMusics().background.dispose();
     }
 }

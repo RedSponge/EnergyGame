@@ -50,10 +50,11 @@ public class TransitionScreen extends AbstractScreen {
                 if(!initiated) {
                     from.hide();
                     from.dispose();
-                    to.show();
+                    to.transitionSwitch();
                     to.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     initiated = true;
                 }
+                to.tick(Gdx.graphics.getDeltaTime());
                 to.render();
             } else {
                 throw new RuntimeException("Tried using TransitionScreen but `to` screen is null!");
