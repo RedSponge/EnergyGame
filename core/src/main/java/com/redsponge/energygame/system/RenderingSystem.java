@@ -57,10 +57,8 @@ public class RenderingSystem extends SortedIteratingSystem {
         this.gameScreen = gameScreen;
         this.mapRenderer = new MapManagerRenderer(mapManager, batch);
         this.xMode = this.yMode = CameraMode.AUTO;
-//        this.sparkParticle = assets.getParticles().sparkle.spawn(new Vector2(), 0);
-        this.sparkNeedsRestart = true;
 
-//        this.electricParticle = assets.getParticles().electric.spawn(new Vector2(), 0);
+        this.sparkNeedsRestart = true;
         this.electricNeedsRestart = true;
     }
 
@@ -174,7 +172,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         AnimationComponent anim = Mappers.animation.get(entity);
 
         anim.timeSinceStart += deltaTime;
-        batch.draw(anim.animation.getKeyFrame(anim.timeSinceStart), pos.x, pos.y);
+        batch.draw(anim.animation.getKeyFrame(anim.timeSinceStart), pos.x - size.width / 2, pos.y - size.height / 2);
     }
 
     @Override

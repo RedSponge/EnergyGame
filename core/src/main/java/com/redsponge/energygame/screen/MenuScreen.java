@@ -65,8 +65,14 @@ public class MenuScreen extends AbstractScreen {
         creditsButton.setPosition(-creditsButton.getWidth(), viewport.getWorldHeight() - 300);
         stage.addActor(creditsButton);
 
-        TextButton exitButton = new TextButton("Exit!", assets.getSkins().menu);
+        TextButton exitButton = new TextButton("Exit ;-; (pls no i has wif an kid)", assets.getSkins().menu);
         exitButton.setPosition(-exitButton.getWidth(), viewport.getWorldHeight() - 350);
+        exitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
         stage.addActor(exitButton);
 
         final TextButton[] buttons = {startButton, optionsButton, creditsButton, exitButton};

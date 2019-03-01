@@ -152,6 +152,6 @@ behind: false
 premultipliedAlpha: false
 spriteMode: animated
 - Image Paths -
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/sparkle_1.png
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/sparkle_2.png
+sparkle_1.png
+sparkle_2.png
 

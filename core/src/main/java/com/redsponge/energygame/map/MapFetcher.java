@@ -14,7 +14,7 @@ public class MapFetcher {
         } while(choice.equals(lastChosen));
         lastChosen = choice;
         System.out.println(choice);
-        return "maps/easy/" + choice + ".tmx";
+        return "maps/easy/" + "path_of_enemies" + ".tmx";
     }
 
 }

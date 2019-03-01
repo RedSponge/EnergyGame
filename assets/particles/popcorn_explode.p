@@ -178,8 +178,8 @@ behind: false
 premultipliedAlpha: false
 spriteMode: animated
 - Image Paths -
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/explode_1.png
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/explode_2.png
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/explode_3.png
-/E:/EranDesk/Turn Off/Code/Workspaces/Java/EnergyGame/texture-packer/raw_textures/particle/explode_4.png
+explode_1.png
+explode_2.png
+explode_3.png
+explode_4.png
 

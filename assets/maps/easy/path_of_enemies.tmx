@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="70" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="25">
+<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="70" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="31">
  <tileset firstgid="1" source="../world.tsx"/>
  <layer name="Base" width="70" height="30">
   <properties>
@@ -76,55 +76,22 @@
 </data>
  </layer>
  <objectgroup name="Enemies">
-  <object id="1" x="249" y="278.5">
+  <object id="25" x="359" y="257">
    <point/>
   </object>
-  <object id="2" x="353.5" y="253">
+  <object id="26" x="759" y="240">
    <point/>
   </object>
-  <object id="3" x="504.5" y="266.5">
+  <object id="27" x="544" y="267">
    <point/>
   </object>
-  <object id="4" x="629.5" y="270">
+  <object id="28" x="448" y="259">
    <point/>
   </object>
-  <object id="5" x="717.5" y="250.5">
+  <object id="29" x="614" y="249">
    <point/>
   </object>
-  <object id="7" x="863" y="279">
-   <point/>
-  </object>
-  <object id="11" x="199" y="266">
-   <point/>
-  </object>
-  <object id="12" x="289" y="260">
-   <point/>
-  </object>
-  <object id="13" x="358" y="217">
-   <point/>
-  </object>
-  <object id="14" x="423" y="248">
-   <point/>
-  </object>
-  <object id="15" x="471" y="279">
-   <point/>
-  </object>
-  <object id="16" x="577" y="271">
-   <point/>
-  </object>
-  <object id="17" x="621" y="229">
-   <point/>
-  </object>
-  <object id="20" x="688" y="240">
-   <point/>
-  </object>
-  <object id="21" x="763" y="244">
-   <point/>
-  </object>
-  <object id="22" x="820" y="257">
-   <point/>
-  </object>
-  <object id="24" x="913" y="271">
+  <object id="30" x="852" y="255">
    <point/>
   </object>
  </objectgroup>
