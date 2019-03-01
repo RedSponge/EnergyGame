@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="7">
+<map version="1.0" tiledversion="2018.04.18" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="9">
  <tileset firstgid="1" source="../world.tsx"/>
  <layer name="Back" width="30" height="30">
   <properties>
@@ -116,15 +116,15 @@
   <object id="1" x="0" y="304">
    <polygon points="0,0 128,0 128,-16 144,-16 144,0 128,0 128,16 112,16 112,64 128,64 128,80 144,80 144,96 176,96 176,112 224,112 224,128 368,128 368,112 400,112 400,96 416,96 416,0 480,0 480,176 0,176"/>
   </object>
-  <object id="2" x="208" y="288">
-   <polygon points="0,0 48,0 48,-16 0,-16 0,0"/>
+  <object id="7" x="208" y="272">
+   <polygon points="0,0 0,16 48,16 48,0"/>
   </object>
-  <object id="3" x="320" y="272">
-   <polygon points="0,0 32,0 32,-16 0,-16 0,0"/>
+  <object id="8" x="320" y="256">
+   <polygon points="0,0 32,0 32,16 0,16"/>
   </object>
  </objectgroup>
- <objectgroup name="Enemies"/>
- <objectgroup name="Events">
+ <objectgroup name="Enemies" visible="0"/>
+ <objectgroup name="Events" visible="0">
   <object id="6" x="416" y="0" width="16" height="480">
    <properties>
     <property name="type" value="loadnext"/>

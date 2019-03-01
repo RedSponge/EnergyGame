@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class RedSpongeSplashScreenRenderer implements Disposable {
+public class ToastySplashScreenRenderer implements Disposable {
 
     private FitViewport viewport;
     private Stage stage;
@@ -21,20 +21,23 @@ public class RedSpongeSplashScreenRenderer implements Disposable {
     private boolean complete;
     private Image icon;
 
-    public RedSpongeSplashScreenRenderer(SpriteBatch batch, AssetManager am) {
+    public ToastySplashScreenRenderer(SpriteBatch batch) {
         this.batch = batch;
-        this.am = am;
+        this.am = new AssetManager();
     }
 
     public void begin() {
         this.viewport = new FitViewport(480, 480);
+        this.am.load("splashscreen/splashscreen.atlas", TextureAtlas.class);
         this.stage = new Stage(viewport, batch);
         this.complete = false;
 
-        float waitBeforeFallDown = 2;
-        TextureAtlas atlas = this.am.get("textures/splashscreen/splashscreen_textures.atlas", TextureAtlas.class);
+        this.am.finishLoading();
 
-        icon = new Image(atlas.findRegion("redsponge/icon"));
+        float waitBeforeFallDown = 2;
+        TextureAtlas atlas = this.am.get("splashscreen/splashscreen.atlas", TextureAtlas.class);
+
+        icon = new Image(atlas.findRegion("icon"));
 
         icon.setSize(256, 256);
         icon.setOrigin(Align.center);
@@ -54,7 +57,7 @@ public class RedSpongeSplashScreenRenderer implements Disposable {
         float floatUpBy = 10;
 
         for(int i = 1; i <= 9; i++) {
-            TextureRegion region = atlas.findRegion("redsponge/l" + i);
+            TextureRegion region = atlas.findRegion("l" + i);
             Image letter = new Image(region);
             letter.setScale(letterScale);
             letter.setPosition(spaced + 10, letterY - floatUpBy);
@@ -95,4 +98,5 @@ public class RedSpongeSplashScreenRenderer implements Disposable {
     public void dispose() {
         this.am.dispose();
     }
+
 }

@@ -2,7 +2,9 @@ package com.redsponge.energygame.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.redsponge.energygame.splashscreen.RedSpongeSplashScreenRenderer;
@@ -11,6 +13,7 @@ import com.redsponge.energygame.transition.TransitionFade;
 public class SplashScreenScreen extends AbstractScreen {
     private RedSpongeSplashScreenRenderer redSpongeSplashScreenRenderer;
     private ScalingViewport scalingViewport;
+    private AssetManager am;
 
     public SplashScreenScreen(GameAccessor ga) {
         super(ga);
@@ -19,8 +22,11 @@ public class SplashScreenScreen extends AbstractScreen {
     @Override
     public void show() {
         super.show();
+        am = new AssetManager();
         this.scalingViewport = new ScalingViewport(Scaling.fill, 1, 1);
-        redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch);
+        am.load("textures/splashscreen/splashscreen_textures.atlas", TextureAtlas.class);
+        am.finishLoading();
+        redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch, am);
         redSpongeSplashScreenRenderer.begin();
     }
 

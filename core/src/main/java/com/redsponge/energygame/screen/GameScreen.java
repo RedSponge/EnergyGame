@@ -148,39 +148,38 @@ public class GameScreen extends AbstractScreen {
         shapeRenderer.setProjectionMatrix(hudViewport.getCamera().combined);
         batch.setProjectionMatrix(hudViewport.getCamera().combined);
 
-        shapeRenderer.begin(ShapeType.Filled);
+        batch.begin();
         Color target = (energy < Constants.HEAT_THRESHOLD ? Constants.NONE_COLOR : energy < Constants.LIGHT_THRESHOLD ? Constants.HEAT_COLOR : energy < Constants.ELECTRIC_THRESHOLD ? Constants.LIGHT_COLOR : Constants.ENERGY_COLOR);
         barColor.lerp(target, 0.1f);
-        shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(10, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 20), 15);
-        shapeRenderer.setColor(barColor);
+
+        assets.getTextures().bar.draw(batch, 30, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 50), 16);
+        batch.setColor(barColor);
         displayedEnergy = (1-0.1f) * displayedEnergy + 0.1f * energy;
         float progress = displayedEnergy / Constants.MAX_ENERGY;
-        shapeRenderer.rect(15, hudViewport.getWorldHeight() - 15, (viewport.getWorldWidth() - 30) * progress, 5);
-        shapeRenderer.end();
+        assets.getTextures().barFilling.draw(batch, 30, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 50) * progress, 16);
+        batch.setColor(Color.WHITE);
 
         if(Mappers.player.get(player).dead) {
             float opacity = GeneralUtils.secondsSince(deathTime) / 1f;
             opacity = opacity > 1 ? 1 : opacity;
 
-            batch.begin();
             assets.getFonts().titleFont.setColor(0, 0, 0, opacity);
             assets.getFonts().titleFont.draw(batch, "You died.", hudViewport.getWorldWidth() / 2 - 150, 70);
             assets.getFonts().titleFont.getData().setScale(0.2f);
             assets.getFonts().titleFont.draw(batch, "Press space to try again!" ,120, 100);
             assets.getFonts().titleFont.draw(batch, "Press escape to return to menu!" ,130, 130);
             assets.getFonts().titleFont.getData().setScale(1);
-            batch.end();
         }
         if(textLength > 0) {
-            batch.begin();
             assets.getFonts().pixelMix.setColor(1, 1, 1, 1);
             assets.getFonts().pixelMix.getData().setScale(0.2f);
             GlyphLayout layout = new GlyphLayout(assets.getFonts().pixelMix, text);
             assets.getFonts().pixelMix.draw(batch, text, hudViewport.getWorldWidth() / 2 - layout.width / 2, hudViewport.getWorldHeight() - 30);
             textLength -= Gdx.graphics.getDeltaTime();
-            batch.end();
         }
+
+        batch.end();
+
     }
 
     @Override

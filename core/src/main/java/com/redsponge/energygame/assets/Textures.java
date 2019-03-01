@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Array;
@@ -51,6 +52,9 @@ public class Textures implements AssetLoader {
 
     public Animation<AtlasRegion> dead;
 
+    public NinePatch bar;
+    public NinePatch barFilling;
+
 
     @Override
     public void load(AssetManager am) {
@@ -59,6 +63,8 @@ public class Textures implements AssetLoader {
         am.load("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
         am.load("textures/sky.png", Texture.class);
         am.load("textures/title.png", Texture.class);
+        am.load("textures/bar.png", Texture.class);
+        am.load("textures/bar_filling.png", Texture.class);
     }
 
     @Override
@@ -111,7 +117,8 @@ public class Textures implements AssetLoader {
 
         sky = am.get("textures/sky.png");
         title = am.get("textures/title.png");
-
+        bar = new NinePatch(am.get("textures/bar.png", Texture.class), 3, 3, 1, 1);
+        barFilling = new NinePatch(am.get("textures/bar_filling.png", Texture.class), 3, 3, 1, 1);
     }
 
     public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name) {
