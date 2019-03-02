@@ -75,7 +75,7 @@ public class MenuScreen extends AbstractScreen {
         title.addAction(Actions.delay(loadDelay + 0.1f, Actions.moveTo(title.getX(), viewport.getWorldHeight() - title.getHeight() - 10, 1, Interpolation.swingOut)));
         stage.addActor(title);
 
-        Label subtitle = new Label("A game made by RedSponge and TheCrispyToasty\n    for the 7th LibGdx Jam", new LabelStyle(assets.getFonts().pixelMix, Color.BLACK));
+        Label subtitle = new Label("A game made by RedSponge and TheCrispyToasty\n    for the 6th LibGdx Jam", new LabelStyle(assets.getFonts().pixelMix, Color.BLACK));
         subtitle.setFontScale(0.4f);
         subtitle.setOrigin(Align.center);
         subtitle.setPosition(viewport.getWorldWidth() / 2 - subtitle.getPrefWidth() / 2, viewport.getWorldHeight() + 40);
