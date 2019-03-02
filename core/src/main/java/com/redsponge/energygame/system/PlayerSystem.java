@@ -255,7 +255,7 @@ public class PlayerSystem extends IteratingSystem {
                 } else {
                     body.applyLinearImpulse(new Vector2(horiz * speed * deltaTime * energyMultiplier, 0), body.getWorldCenter(), true);
                     if (onGround) {
-                        gameScreen.addEnergy(0.1f);
+                        gameScreen.addEnergy(0.1f * getEngine().getSystem(RenderingSystem.class).getCameraSpeed());
                     }
                 }
                 lastMoved = TimeUtils.nanoTime();

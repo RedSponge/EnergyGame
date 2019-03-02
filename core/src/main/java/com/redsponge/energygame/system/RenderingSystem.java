@@ -149,6 +149,7 @@ public class RenderingSystem extends SortedIteratingSystem {
             pc.dead = true;
             gameScreen.setDeathTime(TimeUtils.nanoTime());
             assets.getMusics().background.dispose();
+            assets.getSounds().death.play(1);
         }
 
         mapRenderer.renderForeground(viewport);
@@ -162,12 +163,14 @@ public class RenderingSystem extends SortedIteratingSystem {
         PositionComponent pos = Mappers.position.get(player);
         PlayerComponent p = Mappers.player.get(player);
 
+
         float zoom = ((OrthographicCamera) viewport.getCamera()).zoom;
         ((OrthographicCamera) viewport.getCamera()).zoom = (1-.1f) * zoom + 0.1f * desiredZoom;
 
 
         if(xMode == CameraMode.AUTO) {
             viewport.getCamera().position.x += speed;
+            gameScreen.addScore(speed);
         } else if(xMode == CameraMode.PLAYER) {
             viewport.getCamera().position.x = (1-.1f) * viewport.getCamera().position.x + 0.1f * pos.x;
         } else {
@@ -191,6 +194,13 @@ public class RenderingSystem extends SortedIteratingSystem {
         if(pc.dead) {
             viewport.getCamera().position.lerp(new Vector3(pos.x + 10, pos.y - 10, 0), 0.1f);
             desiredZoom = 0.3f;
+        }
+
+        if(viewport.getCamera().position.x - viewport.getWorldWidth() / 2 * ((OrthographicCamera) viewport.getCamera()).zoom < 0) {
+            viewport.getCamera().position.x = viewport.getWorldWidth() / 2 * ((OrthographicCamera)viewport.getCamera()).zoom;
+        }
+        if(viewport.getCamera().position.y - viewport.getWorldHeight() / 2 * ((OrthographicCamera) viewport.getCamera()).zoom < 0) {
+            viewport.getCamera().position.y = viewport.getWorldHeight() / 2 * ((OrthographicCamera)viewport.getCamera()).zoom;
         }
         viewport.apply();
     }
@@ -251,5 +261,9 @@ public class RenderingSystem extends SortedIteratingSystem {
         if(this.speed > 2.5f) {
             this.speed = 2.5f;
         }
+    }
+
+    public float getCameraSpeed() {
+        return speed;
     }
 }

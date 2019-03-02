@@ -72,23 +72,27 @@ public class MenuScreen extends AbstractScreen {
         Label title = new Label("MicroMania!", new LabelStyle(assets.getFonts().titleFont, Color.BLACK));
         title.setColor(Color.BLACK);
         title.setPosition(viewport.getWorldWidth() / 2, viewport.getWorldHeight() + 50, Align.center);
-        title.addAction(Actions.delay(loadDelay, Actions.moveTo(title.getX(), viewport.getWorldHeight() - title.getHeight() - 10, 1, Interpolation.swingOut)));
+        title.addAction(Actions.delay(loadDelay + 0.1f, Actions.moveTo(title.getX(), viewport.getWorldHeight() - title.getHeight() - 10, 1, Interpolation.swingOut)));
         stage.addActor(title);
+
+        Label subtitle = new Label("A game made by RedSponge and TheCrispyToasty\n    for the 7th LibGdx Jam", new LabelStyle(assets.getFonts().pixelMix, Color.BLACK));
+        subtitle.setFontScale(0.4f);
+        subtitle.setOrigin(Align.center);
+        subtitle.setPosition(viewport.getWorldWidth() / 2 - subtitle.getPrefWidth() / 2, viewport.getWorldHeight() + 40);
+        System.out.println(subtitle.getX(Align.center));
+        subtitle.addAction(Actions.delay(loadDelay, Actions.moveTo(subtitle.getX(), viewport.getWorldHeight() - subtitle.getHeight() - 70, 1, Interpolation.swingOut)));
+        stage.addActor(subtitle);
 
         TextButton startButton = new TextButton("Run!", assets.getSkins().menu);
         startButton.setPosition(-startButton.getWidth(), viewport.getWorldHeight() - 200);
         stage.addActor(startButton);
 
-        TextButton optionsButton = new TextButton("Options!", assets.getSkins().menu);
-        optionsButton.setPosition(-optionsButton.getWidth(), viewport.getWorldHeight() - 250);
-        stage.addActor(optionsButton);
-
         TextButton creditsButton = new TextButton("Credits!", assets.getSkins().menu);
-        creditsButton.setPosition(-creditsButton.getWidth(), viewport.getWorldHeight() - 300);
+        creditsButton.setPosition(-creditsButton.getWidth(), viewport.getWorldHeight() - 250);
         stage.addActor(creditsButton);
 
         TextButton exitButton = new TextButton("Exit!", assets.getSkins().menu);
-        exitButton.setPosition(-exitButton.getWidth(), viewport.getWorldHeight() - 350);
+        exitButton.setPosition(-exitButton.getWidth(), viewport.getWorldHeight() - 300);
         stage.addActor(exitButton);
         exitButton.addListener(new ClickListener() {
             @Override
@@ -112,7 +116,7 @@ public class MenuScreen extends AbstractScreen {
             }
         });
 
-        final TextButton[] buttons = {startButton, optionsButton, creditsButton, exitButton};
+        final TextButton[] buttons = {startButton, creditsButton, exitButton};
 
         float delay = 0.2f;
 
@@ -183,7 +187,7 @@ public class MenuScreen extends AbstractScreen {
         }
         TextButton back = new TextButton("Go Back", assets.getSkins().menu);
         back.setPosition(viewport.getWorldWidth() / 2, -back.getHeight(), Align.center);
-        back.addAction(Actions.delay(0.2f * credits.length + 1, Actions.moveTo(back.getX(), 50, 0.5f, Interpolation.pow2)));
+        back.addAction(Actions.delay(0.2f * credits.length + 2, Actions.moveTo(back.getX(), 50, 0.5f, Interpolation.pow2)));
 
         back.addListener(new ClickListener() {
             @Override

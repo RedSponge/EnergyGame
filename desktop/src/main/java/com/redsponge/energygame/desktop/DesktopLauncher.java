@@ -17,11 +17,11 @@ public class DesktopLauncher {
 
     private static LwjglApplicationConfiguration getDefaultConfiguration() {
         LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
-        configuration.title = "EnergyGame";
-        configuration.width = 640;
-        configuration.height = 480;
-        for (int size : new int[] { 128, 64, 32, 16 }) {
-            configuration.addIcon("libgdx" + size + ".png", FileType.Internal);
+        configuration.title = "Micro Mania!";
+        configuration.width = 640*2;
+        configuration.height = 360*2;
+        for (int size : new int[] { 128, 64, 32 }) {
+            configuration.addIcon("logo_" + size + "x" + size + ".png", FileType.Internal);
         }
         return configuration;
     }

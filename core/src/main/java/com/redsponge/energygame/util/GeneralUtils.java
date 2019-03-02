@@ -36,6 +36,10 @@ public class GeneralUtils {
     }
 
     public static void playSoundRandomlyPitched(Sound sound) {
-        sound.play(0.5f, 0.5f + random.nextFloat(), 0);
+        playSoundRandomlyPitched(sound, 0.5f);
+    }
+
+    public static void playSoundRandomlyPitched(Sound sound, float vol) {
+        sound.play(vol, 0.5f + random.nextFloat(), 0);
     }
 }

@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
@@ -21,10 +19,8 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.redsponge.energygame.component.Mappers;
 import com.redsponge.energygame.component.PhysicsComponent;
 import com.redsponge.energygame.component.PositionComponent;
-import com.redsponge.energygame.map.MapFetcher;
 import com.redsponge.energygame.map.MapManager;
 import com.redsponge.energygame.system.EnemyCleanupSystem;
-import com.redsponge.energygame.system.PhysicsDebugSystem;
 import com.redsponge.energygame.transition.TransitionFade;
 import com.redsponge.energygame.util.Constants;
 import com.redsponge.energygame.system.PhysicsSystem;
@@ -48,11 +44,14 @@ public class GameScreen extends AbstractScreen {
     private Color barColor;
     private float displayedEnergy;
 
-    private PooledEffect currentParticle;
     private long deathTime;
 
     private String text;
     private float textLength;
+    private int score;
+    private boolean paused;
+
+    private static boolean didTutorial = false;
 
     public GameScreen(GameAccessor ga) {
         super(ga);
@@ -60,7 +59,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        score = 0;
     }
 
     @Override
@@ -81,7 +80,12 @@ public class GameScreen extends AbstractScreen {
 
         PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null, assets, this);
 
-        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/tutorial/tutorial_shrunk.tmx"), engine);
+        if(!didTutorial) {
+            mapManager = new MapManager(ps, new TmxMapLoader().load("maps/tutorial/tutorial_shrunk.tmx"), engine);
+            didTutorial = true;
+        } else {
+            mapManager = new MapManager(ps, new TmxMapLoader().load("maps/start.tmx"), engine);
+        }
 
         ps.setMapManager(mapManager);
         player = EntityFactory.getPlayer(assets);
@@ -94,26 +98,31 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
-        engine.addSystem(new EnemyCleanupSystem(assets));
+        engine.addSystem(new EnemyCleanupSystem(assets, this));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
         engine.addEntity(player);
         barColor = new Color(0, 0, 0, 1);
 
         displayedEnergy = 0;
-        currentParticle = assets.getParticles().sparkle.spawn(new Vector2(0, 0));
 
         viewport.getCamera().position.set(150, viewport.getWorldHeight(), 0);
     }
 
     @Override
     public void tick(float delta) {
-        energy += 3;
+        if(Gdx.input.isKeyJustPressed(Keys.ESCAPE) && !Mappers.player.get(player).dead) {
+            paused = !paused;
+            if(paused) {
+                assets.getMusics().background.getInstance().pause();
+            } else {
+                assets.getMusics().background.getInstance().play();
+            }
+        }
+
         if(energy > Constants.MAX_ENERGY) {
             energy = Constants.MAX_ENERGY;
         }
-        ((OrthographicCamera)viewport.getCamera()).zoom -= 0.01f;
         if(Mappers.player.get(player).dead) {
             if(Gdx.input.isKeyJustPressed(Keys.SPACE)){
                 ga.transitionTo(new GameScreen(ga), new TransitionFade(), 2);
@@ -132,20 +141,33 @@ public class GameScreen extends AbstractScreen {
 
         background.apply();
 
+        if(!paused) {
         batch.setProjectionMatrix(background.getCamera().combined);
         batch.begin();
         batch.draw(assets.getTextures().sky, 0, 0, background.getWorldWidth(), background.getWorldHeight());
         batch.end();
+            engine.update(delta);
+            PositionComponent pos = Mappers.position.get(player);
 
-        engine.update(delta);
-        PositionComponent pos = Mappers.position.get(player);
-
-        viewport.apply();
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-        batch.begin();
-        batch.end();
-        assets.getParticles().cleanUp();
-        renderHUD();
+            viewport.apply();
+            batch.setProjectionMatrix(viewport.getCamera().combined);
+            batch.begin();
+            batch.end();
+            assets.getParticles().cleanUp();
+            renderHUD();
+        }
+        else {
+            hudViewport.apply();
+            batch.setProjectionMatrix(hudViewport.getCamera().combined);
+            batch.begin();
+            assets.getFonts().pixelMix.getData().setScale(1);
+            GlyphLayout layout = new GlyphLayout(assets.getFonts().pixelMix, "Paused!");
+            assets.getFonts().pixelMix.draw(batch, "Paused!", hudViewport.getWorldWidth() / 2 - layout.width / 2, hudViewport.getWorldHeight() / 2 - layout.height / 2);
+            assets.getFonts().pixelMix.getData().setScale(0.5f);
+            layout = new GlyphLayout(assets.getFonts().pixelMix, "Press Escape To Continue!");
+            assets.getFonts().pixelMix.draw(batch, "Press Escape To Continue!", hudViewport.getWorldWidth() / 2 - layout.width / 2, 50);
+            batch.end();
+        }
     }
 
     private void renderHUD() {
@@ -181,6 +203,9 @@ public class GameScreen extends AbstractScreen {
         batch.setColor(Color.WHITE);
         batch.draw(face, 10, hudViewport.getWorldHeight() - 40, face.getRegionWidth() * 2, face.getRegionHeight() * 2);
 
+        assets.getFonts().pixelMix.getData().setScale(0.3f);
+        assets.getFonts().pixelMix.draw(batch, "Score: " + score, 10, 10);
+
         if(Mappers.player.get(player).dead) {
             float opacity = GeneralUtils.secondsSince(deathTime) / 1f;
             opacity = opacity > 1 ? 1 : opacity;
@@ -201,7 +226,11 @@ public class GameScreen extends AbstractScreen {
         }
 
         batch.end();
+    }
 
+    @Override
+    public void pause() {
+        paused = true;
     }
 
     @Override
@@ -250,5 +279,10 @@ public class GameScreen extends AbstractScreen {
 
     public void setEnergy(float energy) {
         this.energy = energy;
+    }
+
+    public void addScore(float score) {
+        if(Mappers.player.get(player).dead) return;
+        this.score += score;
     }
 }

@@ -4,45 +4,52 @@ size: 128,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+150_score
+  rotate: false
+  xy: 12, 5
+  size: 10, 5
+  orig: 10, 5
+  offset: 0, 0
+  index: -1
 explode_1
   rotate: false
   xy: 2, 12
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 1
+  index: -1
 explode_2
   rotate: false
   xy: 20, 12
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 2
+  index: -1
 explode_3
   rotate: false
   xy: 38, 12
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 3
+  index: -1
 explode_4
   rotate: false
   xy: 56, 12
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
-  index: 4
+  index: -1
 sparkle_1
   rotate: false
   xy: 2, 2
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 0
+  index: -1
 sparkle_2
   rotate: false
   xy: 74, 20
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 0
+  index: -1
