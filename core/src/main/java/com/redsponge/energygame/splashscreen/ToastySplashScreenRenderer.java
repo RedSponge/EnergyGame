@@ -3,7 +3,6 @@ package com.redsponge.energygame.splashscreen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class ToastySplashScreenRenderer implements Disposable {
 
@@ -19,56 +19,41 @@ public class ToastySplashScreenRenderer implements Disposable {
     private SpriteBatch batch;
     private AssetManager am;
     private boolean complete;
-    private Image icon;
+    private Image glasses;
+    private Image name;
 
-    public ToastySplashScreenRenderer(SpriteBatch batch) {
+    public ToastySplashScreenRenderer(SpriteBatch batch, AssetManager am) {
         this.batch = batch;
-        this.am = new AssetManager();
+        this.am = am;
     }
 
     public void begin() {
-        this.viewport = new FitViewport(480, 480);
-        this.am.load("splashscreen/splashscreen.atlas", TextureAtlas.class);
+        this.viewport = new FitViewport(640, 480);
         this.stage = new Stage(viewport, batch);
         this.complete = false;
 
-        this.am.finishLoading();
+        TextureAtlas atlas = this.am.get("textures/splashscreen/splashscreen_textures.atlas", TextureAtlas.class);
 
-        float waitBeforeFallDown = 2;
-        TextureAtlas atlas = this.am.get("splashscreen/splashscreen.atlas", TextureAtlas.class);
+        glasses = new Image(atlas.findRegion("toasty/glasses"));
+        glasses.setOrigin(Align.center);
+        glasses.setScale(16);
+        glasses.setPosition(viewport.getWorldWidth() / 2, -glasses.getHeight() * 5);
+        glasses.addAction(sequence(moveTo(glasses.getX(), viewport.getWorldHeight() / 3 * 2, 1f, Interpolation.swingOut),
+                delay(0.5f), moveBy(-10, 0, 0.1f), moveBy(20, 0, 0.1f),
+                moveBy(-20, 0, 0.1f), moveBy(10, 0, 0.1f),
+                delay(0.2f), parallel(moveBy(0, 60,0.2f, Interpolation.exp5), scaleTo(14, 14, 0.2f, Interpolation.exp5)),
+                delay(0.2f), parallel(moveBy(0, -60,0.2f, Interpolation.swingOut), scaleTo(16, 16, 0.2f, Interpolation.swingOut)),
+                delay(1.6f), scaleTo(0, 0, 0.5f, Interpolation.exp5)));
 
-        icon = new Image(atlas.findRegion("icon"));
-
-        icon.setSize(256, 256);
-        icon.setOrigin(Align.center);
-        icon.setPosition(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 3 * 2, Align.center);
-        icon.setScale(0);
-
-        icon.addAction(Actions.scaleTo(1, 1, 1, Interpolation.swingOut));
-        icon.addAction(Actions.rotateTo(0, 1, Interpolation.swingOut));
-        icon.addAction(Actions.delay(waitBeforeFallDown, Actions.moveBy(0, -500, 0.5f, Interpolation.swingIn)));
-        stage.addActor(icon);
-
-        int spaced = 0;
-        float letterScale = 5;
-        float letterY = 100;
-        float letterSpace = 5;
-        float delay = 0.1f;
-        float floatUpBy = 10;
-
-        for(int i = 1; i <= 9; i++) {
-            TextureRegion region = atlas.findRegion("l" + i);
-            Image letter = new Image(region);
-            letter.setScale(letterScale);
-            letter.setPosition(spaced + 10, letterY - floatUpBy);
-            spaced += region.getRegionWidth() * letterScale + letterSpace;
-            letter.getColor().a = 0;
-            letter.addAction(Actions.delay(i * delay, Actions.fadeIn(0.5f, Interpolation.exp5)));
-            letter.addAction(Actions.delay(i * delay, Actions.moveBy(0, floatUpBy, 0.5f, Interpolation.exp5)));
-            letter.addAction(Actions.delay(waitBeforeFallDown, Actions.moveBy(0, -500, 0.5f, Interpolation.swingIn)));
-            stage.addActor(letter);
-        }
-
+        name = new Image(atlas.findRegion("toasty/name"));
+        name.setOrigin(Align.center);
+        name.setPosition(viewport.getWorldWidth() / 2 - name.getWidth() / 2, viewport.getWorldHeight() / 3 * 2 - 40);
+        name.setScale(0);
+        name.addAction(sequence(delay(2.7f), parallel(scaleTo(3, 3, 0.5f, Interpolation.swingOut), moveBy(0, -150, 0.5f, Interpolation.swingOut)),
+                delay(0.2f), scaleBy(0.2f, 0.2f, 0.2f), delay(0.2f), scaleBy(-0.2f, -0.2f, 0.2f),
+                delay(0.5f), scaleTo(0, 0, 0.5f, Interpolation.exp5)));
+        stage.addActor(glasses);
+        stage.addActor(name);
     }
 
     public void tick(float delta) {
@@ -80,9 +65,8 @@ public class ToastySplashScreenRenderer implements Disposable {
 
         stage.draw();
 
-        if(icon.getActions().size == 0) {
-            complete = true;
-            am.dispose();
+        if(name.getActions().size == 0) {
+            complete = true; // TODO: Change to TRUE
         }
     }
 
@@ -96,7 +80,6 @@ public class ToastySplashScreenRenderer implements Disposable {
 
     @Override
     public void dispose() {
-        this.am.dispose();
     }
 
 }

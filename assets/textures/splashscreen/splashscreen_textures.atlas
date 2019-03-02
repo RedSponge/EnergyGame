@@ -76,7 +76,7 @@ redsponge/l9
   index: -1
 
 splashscreen_textures2.png
-size: 32,16
+size: 256,32
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -85,5 +85,12 @@ toasty/glasses
   xy: 2, 2
   size: 19, 9
   orig: 19, 9
+  offset: 0, 0
+  index: -1
+toasty/name
+  rotate: false
+  xy: 2, 13
+  size: 150, 16
+  orig: 150, 16
   offset: 0, 0
   index: -1

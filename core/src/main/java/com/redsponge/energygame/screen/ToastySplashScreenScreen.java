@@ -8,40 +8,50 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.redsponge.energygame.splashscreen.RedSpongeSplashScreenRenderer;
+import com.redsponge.energygame.splashscreen.ToastySplashScreenRenderer;
 import com.redsponge.energygame.transition.TransitionFade;
 
-public class SplashScreenScreen extends AbstractScreen {
-    private RedSpongeSplashScreenRenderer redSpongeSplashScreenRenderer;
+public class ToastySplashScreenScreen extends AbstractScreen {
+
+    private ToastySplashScreenRenderer toastySplashScreenRenderer;
     private ScalingViewport scalingViewport;
     private AssetManager am;
+    private boolean begin;
 
-    public SplashScreenScreen(GameAccessor ga) {
+    public ToastySplashScreenScreen(GameAccessor ga) {
         super(ga);
     }
 
     @Override
-    public void show() {
-        super.show();
+    public void transitionSwitch() {
         am = new AssetManager();
+        toastySplashScreenRenderer = new ToastySplashScreenRenderer(batch, am);
         this.scalingViewport = new ScalingViewport(Scaling.fill, 1, 1);
         am.load("textures/splashscreen/splashscreen_textures.atlas", TextureAtlas.class);
         am.finishLoading();
-        redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch, am);
-        redSpongeSplashScreenRenderer.begin();
+        toastySplashScreenRenderer.begin();
+    }
+
+    @Override
+    public void show() {
+        begin = true;
     }
 
     @Override
     public void tick(float delta) {
-        redSpongeSplashScreenRenderer.tick(delta);
+        if(!begin) return;
+        toastySplashScreenRenderer.tick(delta);
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(255/255f, 237/255f, 178/255f, 1);
+        Gdx.gl.glClearColor(35/255f, 175/255f, 150/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(!redSpongeSplashScreenRenderer.isComplete() && !Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-            redSpongeSplashScreenRenderer.render();
+        if(!begin) return;
+
+        if(!toastySplashScreenRenderer.isComplete() && !Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            toastySplashScreenRenderer.render();
         } else if(!transitioning) {
             ga.transitionTo(new MenuScreen(ga), new TransitionFade(), 2);
         }
@@ -49,13 +59,15 @@ public class SplashScreenScreen extends AbstractScreen {
 
     @Override
     public void resize(int width, int height) {
-        redSpongeSplashScreenRenderer.resize(width, height);
+        toastySplashScreenRenderer.resize(width, height);
         scalingViewport.update(width, height, true);
     }
 
 
     @Override
     public void dispose() {
-        redSpongeSplashScreenRenderer.dispose();
+//        redSpongeSplashScreenRenderer.dispose();
+        toastySplashScreenRenderer.dispose();
+        am.dispose();
     }
 }

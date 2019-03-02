@@ -2,7 +2,7 @@ package com.redsponge.energygame.screen;
 
 public enum Screens {
 
-    SPLASHSCREEN(SplashScreenScreen.class),
+    SPLASHSCREEN(ToastySplashScreenScreen.class),
     OTHER(OtherScreen.class);
 
     private Class<? extends AbstractScreen> screen;

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.ParticleEffectPool.PooledEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -80,7 +81,7 @@ public class GameScreen extends AbstractScreen {
 
         PhysicsSystem ps = new PhysicsSystem(new Vector2(0, -10), Constants.DEFAULT_PPM, null, assets, this);
 
-        mapManager = new MapManager(ps, new TmxMapLoader().load(/*"maps/tutorial/tutorial_shrunk.tmx"*/MapFetcher.getEasyMap()), engine);
+        mapManager = new MapManager(ps, new TmxMapLoader().load("maps/tutorial/tutorial_shrunk.tmx"), engine);
 
         ps.setMapManager(mapManager);
         player = EntityFactory.getPlayer(assets);
@@ -93,7 +94,7 @@ public class GameScreen extends AbstractScreen {
         mapManager.init();
 
         engine.addSystem(new PlayerSystem(this, assets));
-        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
+//        engine.addSystem(new PhysicsDebugSystem(ps.getWorld(), viewport));
         engine.addSystem(new EnemyCleanupSystem(assets));
         engine.addSystem(new RenderingSystem(shapeRenderer, batch, viewport, player, mapManager, assets, this));
 
@@ -103,11 +104,15 @@ public class GameScreen extends AbstractScreen {
         displayedEnergy = 0;
         currentParticle = assets.getParticles().sparkle.spawn(new Vector2(0, 0));
 
-        viewport.getCamera().position.set(100, viewport.getWorldHeight(), 0);
+        viewport.getCamera().position.set(150, viewport.getWorldHeight(), 0);
     }
 
     @Override
     public void tick(float delta) {
+        energy += 3;
+        if(energy > Constants.MAX_ENERGY) {
+            energy = Constants.MAX_ENERGY;
+        }
         ((OrthographicCamera)viewport.getCamera()).zoom -= 0.01f;
         if(Mappers.player.get(player).dead) {
             if(Gdx.input.isKeyJustPressed(Keys.SPACE)){
@@ -152,12 +157,29 @@ public class GameScreen extends AbstractScreen {
         Color target = (energy < Constants.HEAT_THRESHOLD ? Constants.NONE_COLOR : energy < Constants.LIGHT_THRESHOLD ? Constants.HEAT_COLOR : energy < Constants.ELECTRIC_THRESHOLD ? Constants.LIGHT_COLOR : Constants.ENERGY_COLOR);
         barColor.lerp(target, 0.1f);
 
-        assets.getTextures().bar.draw(batch, 30, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 50), 16);
+        assets.getTextures().bar.draw(batch, 30, hudViewport.getWorldHeight() - 30, (hudViewport.getWorldWidth() - 50), 16);
         batch.setColor(barColor);
         displayedEnergy = (1-0.1f) * displayedEnergy + 0.1f * energy;
         float progress = displayedEnergy / Constants.MAX_ENERGY;
-        assets.getTextures().barFilling.draw(batch, 30, hudViewport.getWorldHeight() - 20, (viewport.getWorldWidth() - 50) * progress, 16);
+        assets.getTextures().barFilling.draw(batch, 30, hudViewport.getWorldHeight() - 30, (hudViewport.getWorldWidth() - 50) * progress, 16);
+
+        AtlasRegion face = energy < Constants.HEAT_THRESHOLD ? assets.getTextures().barNone
+                : energy < Constants.LIGHT_THRESHOLD ? assets.getTextures().barLow
+                : energy < Constants.ELECTRIC_THRESHOLD ? assets.getTextures().barMed
+                : assets.getTextures().barHigh;
+
+
+        batch.setColor(energy < Constants.HEAT_THRESHOLD ? Color.GRAY : Color.WHITE);
+        batch.draw(assets.getTextures().barHeat, 30 + (viewport.getWorldWidth() - 40) * Constants.HEAT_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+
+        batch.setColor(energy < Constants.LIGHT_THRESHOLD ? Color.GRAY : Color.WHITE);
+        batch.draw(assets.getTextures().barLight, 30 + (viewport.getWorldWidth() - 40) * Constants.LIGHT_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+
+        batch.setColor(energy < Constants.ELECTRIC_THRESHOLD ? Color.GRAY : Color.WHITE);
+        batch.draw(assets.getTextures().barElectricity, 30 + (viewport.getWorldWidth() - 40) * Constants.ELECTRIC_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+
         batch.setColor(Color.WHITE);
+        batch.draw(face, 10, hudViewport.getWorldHeight() - 40, face.getRegionWidth() * 2, face.getRegionHeight() * 2);
 
         if(Mappers.player.get(player).dead) {
             float opacity = GeneralUtils.secondsSince(deathTime) / 1f;

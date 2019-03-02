@@ -5,9 +5,9 @@ import com.redsponge.energygame.util.GeneralUtils;
 
 public class MapFetcher {
 
-    private static final String[] EASY_MAPS = {"bridge", "cave", "cliff", "path_of_enemies", "the_holes", "Big_Big_hole",
-    "sans_undertale", "the_brig", "the_hole_of_shame", "true_friends"};
-    private static String lastChosen = "the_brig";
+    private static final String[] EASY_MAPS = {"bridge", "cave", "path_of_enemies", "the_holes", "Big_Big_hole",
+    "sans_undertale", "the_brig", "the_hole_of_shame", "true_friends", "parkour_is_fun_pls", "beach", "wall_jump"};
+    private static String lastChosen = "";
 
     public static String getEasyMap() {
         String choice = "";

@@ -155,7 +155,7 @@ public class RenderingSystem extends SortedIteratingSystem {
     }
 
 
-    private float speed = 1;
+    private float speed = 1f;
     private float desiredZoom = 1;
 
     private void setupCameraAndMatrices() {
@@ -243,6 +243,13 @@ public class RenderingSystem extends SortedIteratingSystem {
             return CameraMode.AUTO;
         } else {
             return CameraMode.FIXED;
+        }
+    }
+
+    public void addSpeed(float speed) {
+        this.speed += speed;
+        if(this.speed > 2.5f) {
+            this.speed = 2.5f;
         }
     }
 }

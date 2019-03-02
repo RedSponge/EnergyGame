@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.redsponge.energygame.assets.Assets;
 import com.redsponge.energygame.screen.AbstractScreen;
 import com.redsponge.energygame.screen.GameAccessor;
-import com.redsponge.energygame.screen.GameScreen;
-import com.redsponge.energygame.screen.MenuScreen;
-import com.redsponge.energygame.screen.SplashScreenScreen;
+import com.redsponge.energygame.screen.RedSpongeSplashScreenScreen;
+import com.redsponge.energygame.screen.ToastySplashScreenScreen;
 
 public class EnergyGame extends Game {
 
@@ -27,7 +26,7 @@ public class EnergyGame extends Game {
 
         this.ga = new GameAccessor(this);
 
-        setScreen(new SplashScreenScreen(ga));
+        setScreen(new RedSpongeSplashScreenScreen(ga));
     }
 
     @Override

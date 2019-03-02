@@ -72,6 +72,7 @@ public class CollisionManager implements ContactListener {
             if(eventC.event.equals("loadnext")) {
                 Gdx.app.log("Event", "LoadNext Event Called!");
                 mapManager.loadNextMap();
+                this.engine.getSystem(RenderingSystem.class).addSpeed(0.1f);
             } else if(eventC.event.equals("zoom")) {
                 Gdx.app.log("Event", "Zoom Event Called!");
                 this.engine.getSystem(RenderingSystem.class).setDesiredZoom(Float.parseFloat(eventC.props.get("data", String.class)));

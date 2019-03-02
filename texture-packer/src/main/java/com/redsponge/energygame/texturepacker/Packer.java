@@ -9,6 +9,7 @@ public class Packer {
         TexturePacker.processIfModified("raw_textures/particle", "../assets/particles", "textures");
         TexturePacker.processIfModified("raw_textures/enemy", "../assets/textures/enemy", "enemy_textures");
         TexturePacker.processIfModified("raw_textures/splashscreen", "../assets/textures/splashscreen", "splashscreen_textures");
+        TexturePacker.processIfModified("raw_textures/bar", "../assets/textures/bar", "bar_textures");
     }
 
 }

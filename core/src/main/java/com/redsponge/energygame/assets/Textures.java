@@ -54,6 +54,14 @@ public class Textures implements AssetLoader {
 
     public NinePatch bar;
     public NinePatch barFilling;
+    public AtlasRegion barNone;
+    public AtlasRegion barLow;
+    public AtlasRegion barMed;
+    public AtlasRegion barHigh;
+    public AtlasRegion barHeat;
+    public AtlasRegion barLight;
+    public AtlasRegion barElectricity;
+
 
 
     @Override
@@ -63,8 +71,7 @@ public class Textures implements AssetLoader {
         am.load("textures/enemy/enemy_textures.atlas", TextureAtlas.class);
         am.load("textures/sky.png", Texture.class);
         am.load("textures/title.png", Texture.class);
-        am.load("textures/bar.png", Texture.class);
-        am.load("textures/bar_filling.png", Texture.class);
+        am.load("textures/bar/bar_textures.atlas", TextureAtlas.class);
     }
 
     @Override
@@ -117,8 +124,17 @@ public class Textures implements AssetLoader {
 
         sky = am.get("textures/sky.png");
         title = am.get("textures/title.png");
-        bar = new NinePatch(am.get("textures/bar.png", Texture.class), 3, 3, 1, 1);
-        barFilling = new NinePatch(am.get("textures/bar_filling.png", Texture.class), 3, 3, 1, 1);
+
+        TextureAtlas barAtlas = am.get("textures/bar/bar_textures.atlas");
+        bar = new NinePatch(barAtlas.findRegion("bar"), 3, 3, 1, 1);
+        barFilling = new NinePatch(barAtlas.findRegion("bar_filling"), 3, 3, 1, 1);
+        barNone = barAtlas.findRegion("none_no_hands");
+        barLow = barAtlas.findRegion("low_no_hands");
+        barMed = barAtlas.findRegion("med_no_hands");
+        barHigh = barAtlas.findRegion("high_no_hands");
+        barHeat = barAtlas.findRegion("heat_icon");
+        barLight = barAtlas.findRegion("light_icon");
+        barElectricity = barAtlas.findRegion("electricity_icon");;
     }
 
     public Animation<AtlasRegion> load(TextureAtlas atlas, int numFrames, String name) {
