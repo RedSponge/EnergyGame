@@ -79,7 +79,7 @@ public class MenuScreen extends AbstractScreen {
         subtitle.setFontScale(0.4f);
         subtitle.setOrigin(Align.center);
         subtitle.setPosition(viewport.getWorldWidth() / 2 - subtitle.getPrefWidth() / 2, viewport.getWorldHeight() + 40);
-        System.out.println(subtitle.getX(Align.center));
+        System.out.println(subtitle.getX(Align.center) + " " + subtitle.getY(Align.center));
         subtitle.addAction(Actions.delay(loadDelay, Actions.moveTo(subtitle.getX(), viewport.getWorldHeight() - subtitle.getHeight() - 70, 1, Interpolation.swingOut)));
         stage.addActor(subtitle);
 
@@ -200,8 +200,7 @@ public class MenuScreen extends AbstractScreen {
 
     @Override
     public void tick(float delta) {
-        if(!assets.update()) {
-        } else if(!loadedResources) {
+        if(assets.update() && !loadedResources) {
             assets.getResources();
             loadedResources = true;
             initMenu();

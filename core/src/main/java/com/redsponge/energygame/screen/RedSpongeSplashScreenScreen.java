@@ -28,8 +28,6 @@ public class RedSpongeSplashScreenScreen extends AbstractScreen {
         this.scalingViewport = new ScalingViewport(Scaling.fill, 1, 1);
         am.load("textures/splashscreen/splashscreen_textures.atlas", TextureAtlas.class);
         am.finishLoading();
-//        redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch, am);
-//        redSpongeSplashScreenRenderer.begin();
         redSpongeSplashScreenRenderer = new RedSpongeSplashScreenRenderer(batch, am);
         redSpongeSplashScreenRenderer.begin();
     }

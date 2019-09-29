@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
@@ -53,8 +54,11 @@ public class GameScreen extends AbstractScreen {
 
     private static boolean didTutorial = false;
 
+    public static int shake;
+
     public GameScreen(GameAccessor ga) {
         super(ga);
+        transitionSwitch();
     }
 
     @Override
@@ -113,11 +117,7 @@ public class GameScreen extends AbstractScreen {
     public void tick(float delta) {
         if(Gdx.input.isKeyJustPressed(Keys.ESCAPE) && !Mappers.player.get(player).dead) {
             paused = !paused;
-            if(paused) {
-                assets.getMusics().background.getInstance().pause();
-            } else {
-                assets.getMusics().background.getInstance().play();
-            }
+            updateMusic();
         }
 
         if(energy > Constants.MAX_ENERGY) {
@@ -132,12 +132,15 @@ public class GameScreen extends AbstractScreen {
         }
     }
 
+    Vector3 camPos = new Vector3();
+
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 
         background.apply();
 
@@ -192,13 +195,13 @@ public class GameScreen extends AbstractScreen {
 
 
         batch.setColor(energy < Constants.HEAT_THRESHOLD ? Color.GRAY : Color.WHITE);
-        batch.draw(assets.getTextures().barHeat, 30 + (viewport.getWorldWidth() - 40) * Constants.HEAT_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+        batch.draw(assets.getTextures().barHeat, 30 + (viewport.getWorldWidth() - 40) * Constants.HEAT_THRESHOLD / Constants.MAX_ENERGY - assets.getTextures().barHeat.getRegionWidth() / 2f, hudViewport.getWorldHeight() - 30);
 
         batch.setColor(energy < Constants.LIGHT_THRESHOLD ? Color.GRAY : Color.WHITE);
-        batch.draw(assets.getTextures().barLight, 30 + (viewport.getWorldWidth() - 40) * Constants.LIGHT_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+        batch.draw(assets.getTextures().barLight, 30 + (viewport.getWorldWidth() - 40) * Constants.LIGHT_THRESHOLD / Constants.MAX_ENERGY - assets.getTextures().barLight.getRegionWidth() / 2f, hudViewport.getWorldHeight() - 30);
 
         batch.setColor(energy < Constants.ELECTRIC_THRESHOLD ? Color.GRAY : Color.WHITE);
-        batch.draw(assets.getTextures().barElectricity, 30 + (viewport.getWorldWidth() - 40) * Constants.ELECTRIC_THRESHOLD / Constants.MAX_ENERGY, hudViewport.getWorldHeight() - 30);
+        batch.draw(assets.getTextures().barElectricity, 30 + (viewport.getWorldWidth() - 40) * Constants.ELECTRIC_THRESHOLD / Constants.MAX_ENERGY - assets.getTextures().barElectricity.getRegionWidth() / 2f, hudViewport.getWorldHeight() - 30);
 
         batch.setColor(Color.WHITE);
         batch.draw(face, 10, hudViewport.getWorldHeight() - 40, face.getRegionWidth() * 2, face.getRegionHeight() * 2);
@@ -230,7 +233,18 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void pause() {
-        paused = true;
+        if(!Mappers.player.get(player).dead) {
+            paused = true;
+            updateMusic();
+        }
+    }
+
+    private void updateMusic() {
+        if(paused) {
+            assets.getMusics().background.getInstance().pause();
+        } else {
+            assets.getMusics().background.getInstance().play();
+        }
     }
 
     @Override
@@ -244,7 +258,7 @@ public class GameScreen extends AbstractScreen {
     public void addEnergy(float energy) {
         this.energy += energy;
         this.energy = this.energy < 0 ? 0 : this.energy;
-        this.energy = this.energy > Constants.MAX_ENERGY ? Constants.MAX_ENERGY : this.energy;
+        this.energy = Math.min(this.energy, Constants.MAX_ENERGY);
     }
 
     public float getEnergy() {

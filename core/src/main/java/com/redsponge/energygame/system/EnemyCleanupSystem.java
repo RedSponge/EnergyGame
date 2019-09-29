@@ -33,6 +33,7 @@ public class EnemyCleanupSystem extends IteratingSystem {
             GeneralUtils.playSoundRandomlyPitched(assets.getSounds().enemyKill, 1);
             gameScreen.addScore(150);
             assets.getParticles().enemyKillScore.spawn(new Vector2(pos.x, pos.y));
+            RenderingSystem.shake = 5;
         }
     }
 }

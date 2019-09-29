@@ -16,6 +16,7 @@ public class MusicHolder implements Disposable {
 
     public void load() {
         instance = Gdx.audio.newMusic(file);
+        instance.setVolume(.5f);
     }
 
     public Music getInstance() {

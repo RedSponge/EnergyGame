@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -48,6 +49,9 @@ public class RenderingSystem extends SortedIteratingSystem {
     private boolean sparkNeedsRestart;
     private boolean electricNeedsRestart;
 
+    public static int shake;
+    private Vector3 camPos = new Vector3();
+
     public RenderingSystem(ShapeRenderer shapeRenderer, SpriteBatch batch, Viewport viewport, Entity player, MapManager mapManager, Assets assets, GameScreen gameScreen) {
         super(Family.all(PositionComponent.class, SizeComponent.class, AnimationComponent.class).get(), new ZComparator(), Constants.RENDERING_PRIORITY);
         this.shapeRenderer = shapeRenderer;
@@ -69,10 +73,10 @@ public class RenderingSystem extends SortedIteratingSystem {
     public void update(float deltaTime) {
         setupCameraAndMatrices();
         AnimatedTiledMapTile.updateAnimationBaseTime();
+        viewport.apply();
         mapRenderer.renderBackground(viewport);
 
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
-        viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
         batch.begin();
@@ -153,6 +157,11 @@ public class RenderingSystem extends SortedIteratingSystem {
         }
 
         mapRenderer.renderForeground(viewport);
+
+        if(shake > 0) {
+            viewport.getCamera().position.set(camPos);
+            shake--;
+        }
     }
 
 
@@ -201,6 +210,12 @@ public class RenderingSystem extends SortedIteratingSystem {
         }
         if(viewport.getCamera().position.y - viewport.getWorldHeight() / 2 * ((OrthographicCamera) viewport.getCamera()).zoom < 0) {
             viewport.getCamera().position.y = viewport.getWorldHeight() / 2 * ((OrthographicCamera)viewport.getCamera()).zoom;
+        }
+        camPos.set(viewport.getCamera().position);
+
+        if(shake > 0) {
+            viewport.getCamera().position.x += MathUtils.random(-10, 10);
+            viewport.getCamera().position.y += MathUtils.random(-10, 10);
         }
         viewport.apply();
     }
